@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>调试测试站｜线上测试主页</title>
+  <style>
+    :root {
+      --bg: #f8f6fc;
+      --panel: rgba(255,255,255,0.88);
+      --panel-strong: #ffffff;
+      --text: #231a33;
+      --muted: #6f6782;
+      --line: #e6def3;
+      --soft: #f2ecfb;
+      --accent: #8b5cf6;
+      --accent-2: #ec4899;
+      --accent-3: #f59e0b;
+      --shadow: 0 18px 48px rgba(139, 92, 246, 0.10);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(139,92,246,.14), transparent 35%),
+        radial-gradient(circle at top right, rgba(236,72,153,.12), transparent 28%),
+        linear-gradient(180deg, #fcfbff 0%, #f8f6fc 45%, #f4f0fb 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .shell { max-width: 1120px; margin: 0 auto; padding: 24px 16px 56px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .hero {
+      padding: clamp(26px, 4vw, 44px);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(139,92,246,.14), transparent 32%),
+        radial-gradient(circle at 0% 100%, rgba(245,158,11,.14), transparent 28%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1.15fr .85fr; gap: 24px; align-items: center; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      color: var(--accent); background: var(--soft); border: 1px solid var(--line);
+      margin-bottom: 16px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 6vw, 68px);
+      line-height: 1.02;
+      letter-spacing: -.04em;
+    }
+    .gradient {
+      background: linear-gradient(100deg, #6d28d9 0%, #8b5cf6 35%, #ec4899 78%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .sub {
+      margin-top: 16px; max-width: 640px;
+      font-size: 17px; line-height: 1.9; color: var(--muted);
+    }
+    .facts { display: flex; flex-wrap: wrap; gap: 10px 12px; margin: 22px 0 0; padding: 0; list-style: none; }
+    .facts li {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.88); border: 1px solid var(--line);
+      border-radius: 999px; padding: 9px 14px; font-size: 13px; color: var(--muted);
+    }
+    .facts strong { color: var(--accent); }
+    .hero-note {
+      margin-top: 20px; padding: 16px 18px; border-radius: 18px;
+      border: 1px solid var(--line); background: linear-gradient(180deg, #fff, #faf7ff);
+      color: #5f5573; line-height: 1.85; font-size: 14px;
+    }
+    .hero-visual {
+      min-height: 320px; position: relative; display: flex; align-items: center; justify-content: center;
+    }
+    .ring {
+      width: min(300px, 100%); aspect-ratio: 1; border-radius: 50%;
+      background: conic-gradient(from 220deg, rgba(139,92,246,.15), rgba(245,158,11,.12), rgba(236,72,153,.14), rgba(139,92,246,.15));
+      border: 1px solid rgba(139,92,246,.18); display: grid; place-items: center;
+      box-shadow: inset 0 0 60px rgba(255,255,255,.55), 0 18px 40px rgba(139,92,246,.08);
+    }
+    .ring span {
+      width: 72%; height: 72%; border-radius: 50%; display: grid; place-items: center;
+      background: linear-gradient(180deg, #ffffff, #f8f4ff); border: 1px solid var(--line);
+      color: rgba(109, 40, 217, .22); font-size: clamp(28px, 5vw, 42px); font-weight: 800; letter-spacing: .08em;
+      text-align: center;
+    }
+    .float-card {
+      position: absolute; padding: 10px 14px; border-radius: 16px;
+      background: rgba(255,255,255,.92); border: 1px solid var(--line); box-shadow: 0 12px 24px rgba(139,92,246,.08);
+      font-size: 13px; font-weight: 800; color: var(--accent);
+    }
+    .f1 { top: 8%; right: 6%; transform: rotate(-6deg); }
+    .f2 { top: 42%; left: 2%; transform: rotate(4deg); }
+    .f3 { bottom: 10%; right: 4%; transform: rotate(5deg); color: #db2777; }
+    .f4 { bottom: 36%; left: 12%; transform: rotate(-4deg); color: #d97706; }
+    .section-title { margin: 28px 0 16px; font-size: 28px; letter-spacing: -.02em; }
+    .section-desc { color: var(--muted); line-height: 1.85; margin: 0 0 18px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; }
+    .test-card {
+      padding: 22px; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 300px;
+      background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(251,248,255,.96));
+    }
+    .test-card::after {
+      content: "";
+      position: absolute; right: -32px; bottom: -36px; width: 140px; height: 140px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,92,246,.16), rgba(139,92,246,0)); pointer-events: none;
+    }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 10px; border-radius: 999px; font-size: 12px; color: var(--muted);
+      background: var(--soft); border: 1px solid var(--line);
+    }
+    .test-card h3 { margin: 0 0 12px; font-size: 30px; line-height: 1.16; letter-spacing: -.02em; }
+    .test-card p { margin: 0; color: var(--muted); line-height: 1.85; font-size: 15px; }
+    .card-tip {
+      margin-top: 16px; font-size: 13px; color: #7b5ce0; line-height: 1.7;
+      padding: 10px 12px; border-radius: 14px; background: rgba(139,92,246,.08); border: 1px solid rgba(139,92,246,.12);
+    }
+    .cta-row { margin-top: auto; padding-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
+      padding: 14px 18px; border-radius: 16px; font-weight: 800; transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      color: #fff; background: linear-gradient(100deg, #7c3aed, #8b5cf6 42%, #ec4899 100%);
+      box-shadow: 0 14px 28px rgba(139,92,246,.20);
+    }
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .why-card { padding: 18px; background: linear-gradient(180deg, #fff, #fbf8ff); }
+    .why-card h4 { margin: 0 0 8px; font-size: 16px; }
+    .why-card p { margin: 0; color: var(--muted); line-height: 1.8; font-size: 14px; }
+    .footer-note { margin-top: 22px; font-size: 13px; color: var(--muted); line-height: 1.8; }
+    @media (max-width: 860px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-visual { min-height: 220px; }
+      .ring { width: min(220px, 72vw); }
+    }
+    @media (max-width: 600px) {
+      .shell { padding: 16px 12px 44px; }
+      .hero, .test-card, .why-card { padding: 18px; }
+      h1 { font-size: clamp(30px, 12vw, 44px); }
+      .sub { font-size: 15px; }
+      .facts { display: grid; grid-template-columns: 1fr; }
+      .float-card { position: static; transform: none !important; }
+      .hero-visual { display: grid; gap: 10px; justify-items: center; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero card">
+      <div class="hero-inner">
+        <div>
+          <div class="eyebrow">娱乐测试调试站 · 先跑通，再上线</div>
+          <h1>
+            <span>今天先测哪一个？</span><br />
+            <span class="gradient">先把好玩和顺手调到位。</span>
+          </h1>
+          <p class="sub">
+            这个仓库用于调试线上测试页面和交互流程。当前先放入《一人之下》人物测评，
+            等你确认题目、结果页和整体体验没问题后，再迁移到正式的 <strong>Domestic-test</strong> 首页里。
+          </p>
+          <ul class="facts">
+            <li><strong>30题正式版</strong> 重点拉开15个角色差异</li>
+            <li><strong>单题推进</strong> 作答更顺手</li>
+            <li><strong>结果页三段式</strong> 人物照片 / 人物简介 / 结果解释</li>
+          </ul>
+          <div class="hero-note">
+            当前版本用于功能和版式调试。结果页中的“人物照片”先使用程序生成的角色图卡，方便你确认布局、尺寸和信息层级；
+            等确认没问题后，再统一替换成正式图片素材会更稳。
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="ring"><span>DEBUG<br/>TEST</span></div>
+          <div class="float-card f1">《一人之下》</div>
+          <div class="float-card f2">15个角色</div>
+          <div class="float-card f3">结果页先调顺</div>
+          <div class="float-card f4">再迁移正式站</div>
+        </div>
+      </div>
+    </section>
+
+    <h2 class="section-title">当前可调试的测试</h2>
+    <p class="section-desc">先把单个测试做顺，再整合进正式主页。这个版本重点验证题目可读性、计分准确性、角色结果区分度和结果页展示结构。</p>
+
+    <section class="grid">
+      <article class="test-card card">
+        <div class="tags">
+          <span class="tag">娱乐向</span>
+          <span class="tag">30题</span>
+          <span class="tag">15个角色</span>
+          <span class="tag">漫画角色匹配</span>
+        </div>
+        <h3>《一人之下》人物测评</h3>
+        <p>
+          如果你活在《一人之下》的世界里，你更像谁？
+          这套测试测的不是谁更强，而是你遇事怎么判断、怎么处理关系、怎么在压力下做选择，
+          最后把你匹配到最接近的角色。
+        </p>
+        <div class="card-tip">调试重点：题目是否顺、结果是否准、页面层级是否清楚，以及“人物照片 / 人物简介 / 结果解释”结构是否好用。</div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="./tests/yirenzhixia/index.html">开始测试 →</a>
+        </div>
+      </article>
+    </section>
+
+    <h2 class="section-title">这一版主要检查什么</h2>
+    <section class="why-grid">
+      <article class="why-card card">
+        <h4>题目是否好理解</h4>
+        <p>尽量把抽象表达改成更清楚的日常场景，让用户一眼就知道自己会怎么选。</p>
+      </article>
+      <article class="why-card card">
+        <h4>角色是否拉得开</h4>
+        <p>30题版本优先保证区分度，避免王也、张楚岚、徐四这类角色撞型太严重。</p>
+      </article>
+      <article class="why-card card">
+        <h4>结果页是否顺手</h4>
+        <p>重点看人物图卡尺寸、简介长度、结果解释的阅读节奏，确认后再放到正式站。</p>
+      </article>
+    </section>
+
+    <p class="footer-note">
+      说明：本仓库当前用于调试版测试展示。等你确认页面、题目和结果逻辑没问题后，再迁移到正式的线上测试主页。
+    </p>
+  </main>
+</body>
+</html>
