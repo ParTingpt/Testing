@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>《你的恋爱脑爆击指数测试》</title>
+  <style>
+    :root {
+      --text: #231a33;
+      --muted: #6f6782;
+      --line: #e6def3;
+      --soft: #fdf0f7;
+      --accent: #8b5cf6;
+      --accent-2: #ec4899;
+      --shadow: 0 18px 48px rgba(139,92,246,.10);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(139,92,246,.12), transparent 32%),
+        radial-gradient(circle at top right, rgba(236,72,153,.10), transparent 24%),
+        linear-gradient(180deg,#fffafc 0%,#faf6fd 44%,#f7f0fb 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .shell { max-width: 960px; margin: 0 auto; padding: 18px 14px 44px; }
+    .card { background: rgba(255,255,255,.92); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .back { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px; background: #fff; border: 1px solid var(--line); color: var(--accent); font-weight: 700; text-decoration: none; margin-bottom: 14px; }
+    .hero, .test-wrap, .loading-wrap, .result-wrap { padding: 20px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 999px; background: var(--soft); border: 1px solid #f5d7e8; color: var(--accent-2); font-size: 12px; font-weight: 700; margin-bottom: 14px; }
+    h1 { margin: 0; font-size: clamp(30px, 7vw, 46px); line-height: 1.08; letter-spacing: -.03em; }
+    .sub { margin-top: 14px; color: var(--muted); line-height: 1.9; font-size: 15px; }
+    .hero-tips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .pill { padding: 8px 12px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+    .actions { display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 18px; }
+    .hint { font-size: 13px; color: var(--muted); line-height: 1.8; }
+    .btn { border: 0; cursor: pointer; border-radius: 14px; padding: 13px 18px; font-weight: 800; font: inherit; transition: transform .16s ease, opacity .16s ease; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .btn-primary { background: linear-gradient(100deg,#7c3aed,#8b5cf6 36%,#ec4899 100%); color: #fff; box-shadow: 0 12px 28px rgba(139,92,246,.18); }
+    .btn-secondary { background: #fff; color: var(--accent); border: 1px solid var(--line); }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .dock { position: sticky; top: 10px; z-index: 20; margin-top: 16px; padding: 16px 18px; display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; background: rgba(255,250,252,.92); backdrop-filter: blur(10px); }
+    .progress { flex: 1; min-width: 220px; height: 10px; background: #f5e6f2; border-radius: 999px; overflow: hidden; }
+    .progress > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg,#8b5cf6,#ec4899); transition: width .2s ease; }
+    .progress-text { font-size: 13px; color: var(--muted); white-space: nowrap; }
+    .question-card { display: none; border: 1px solid var(--line); border-radius: 20px; padding: 18px; background: linear-gradient(180deg,#fff,#fff8fc); }
+    .question-card.active { display: block; }
+    .qmeta { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; color: var(--muted); font-size: 12px; }
+    .badge { display: inline-flex; align-items: center; padding: 7px 12px; border-radius: 999px; background: var(--soft); border: 1px solid #f5d7e8; color: var(--accent-2); font-weight: 700; }
+    .qtitle { font-size: 20px; line-height: 1.75; }
+    .options { display: grid; gap: 10px; margin-top: 18px; }
+    .option { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 16px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+    .option:hover { background: #fffafd; border-color: #e8b4d2; }
+    .option input { margin-top: 4px; accent-color: var(--accent-2); }
+    .option-code { min-width: 22px; font-weight: 800; color: var(--accent-2); }
+    .option-text { flex: 1; line-height: 1.85; }
+    .spinner { display: inline-block; width: 44px; height: 44px; border: 4px solid #f4e4ef; border-radius: 50%; border-top-color: var(--accent-2); animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-wrap { text-align: center; padding: 72px 20px; }
+    .loading-wrap h2 { margin: 22px 0 0; font-size: 22px; }
+    .loading-wrap p { margin-top: 10px; color: var(--muted); font-size: 14px; }
+    .result-wrap { display: grid; gap: 16px; }
+    .box { border: 1px solid var(--line); border-radius: 18px; padding: 18px; background: linear-gradient(180deg,#fff,#fff8fc); }
+    .photo-card { min-height: 260px; border-radius: 20px; border: 1px solid var(--line); background: linear-gradient(135deg,#faf1ff 0%,#fff0f7 100%); display: grid; place-items: center; }
+    .avatar { width: 120px; height: 120px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(180deg,#fff,#fff4fb); border: 1px solid var(--line); font-size: 46px; margin: 0 auto 14px; }
+    .photo-name { font-size: clamp(28px,6vw,40px); font-weight: 800; letter-spacing: -.03em; text-align: center; }
+    .photo-note { font-size: 13px; color: var(--muted); text-align: center; margin-top: 10px; }
+    .score-chip {
+      margin: 14px auto 0;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: 999px;
+      background: rgba(255,255,255,.92); border: 1px solid var(--line);
+      color: var(--accent-2); font-size: 13px; font-weight: 800;
+    }
+    .box h3 { margin: 0 0 10px; font-size: 18px; }
+    .box p { margin: 0; color: var(--muted); line-height: 1.95; font-size: 15px; white-space: pre-wrap; }
+    .basic-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    .basic-item { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; background: #fff; }
+    .basic-label { font-size: 12px; color: var(--accent-2); font-weight: 800; margin-bottom: 6px; }
+    .basic-value { color: var(--muted); line-height: 1.8; font-size: 14px; }
+    .note { font-size: 13px; color: var(--muted); line-height: 1.85; }
+    .result-actions { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    @media(max-width: 720px) {
+      .hero, .test-wrap, .loading-wrap, .result-wrap { padding: 16px; }
+      .qtitle { font-size: 18px; }
+      .basic-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <a class="back" href="../../index.html">← 返回测试主页</a>
+
+    <section id="intro" class="screen active">
+      <div class="hero card">
+        <div class="eyebrow">娱乐向 · 爆款恋爱话题测试</div>
+        <h1>《你的恋爱脑爆击指数测试》</h1>
+        <p class="sub">这套测试测的不是你会不会爱人，而是你一心动会怎么上头：是嘴硬心软、氛围脑补、反复试探、付出爆冲，还是直接全糖失守。做完之后，你会得到一个很适合截图分享的恋爱脑结果页。</p>
+        <div class="hero-tips">
+          <span class="pill">12题爆款版</span>
+          <span class="pill">单题推进</span>
+          <span class="pill">结果页可截图</span>
+          <span class="pill">6种恋爱脑状态</span>
+        </div>
+        <div class="actions">
+          <div class="hint">作答时请选“现实里的你”，不要选你希望自己看起来最清醒的样子。</div>
+          <button id="startBtn" class="btn btn-primary" type="button">开始测试</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="test" class="screen">
+      <div class="dock card">
+        <div class="progress"><span id="progressBar"></span></div>
+        <div class="progress-text" id="progressText">0 / 12</div>
+      </div>
+      <div class="test-wrap card">
+        <div id="questionList"></div>
+        <div class="actions">
+          <button id="backHomeBtn" class="btn btn-secondary" type="button">返回主页</button>
+          <button id="prevBtn" class="btn btn-secondary" type="button" hidden>上一题</button>
+          <div style="flex:1"></div>
+          <button id="nextBtn" class="btn btn-secondary" type="button" disabled>下一题</button>
+          <button id="submitBtn" class="btn btn-primary" type="button" style="display:none" disabled>查看结果</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="loading" class="screen">
+      <div class="loading-wrap card">
+        <div class="spinner"></div>
+        <h2>正在计算你的恋爱脑爆击指数…</h2>
+        <p id="loadingText">读取你的上头反应中…</p>
+      </div>
+    </section>
+
+    <section id="result" class="screen">
+      <div class="result-wrap card">
+        <div class="box">
+          <div class="photo-card">
+            <div style="text-align:center">
+              <div class="avatar" id="avatarText">🧊</div>
+              <div class="photo-name" id="resultName">防沉迷模式</div>
+              <div class="score-chip">恋爱脑爆击指数 <span id="scorePercent">18%</span></div>
+              <div class="photo-note">当前为调试图卡，正式上线时也可继续保留这种可截图样式</div>
+            </div>
+          </div>
+        </div>
+        <div class="box">
+          <h3>类型简介</h3>
+          <p id="resultIntro"></p>
+        </div>
+        <div class="box">
+          <h3>你的结果参数</h3>
+          <div class="basic-grid" id="basicGrid"></div>
+        </div>
+        <div class="box">
+          <h3>结果解释</h3>
+          <p id="resultDesc"></p>
+        </div>
+        <div class="note">说明：本测试主要用于娱乐与自我观察，不替代专业心理评估。这里的“恋爱脑”指的是情绪投入、脑补程度和关系中的上头倾向，不代表真实的心理诊断结论。</div>
+        <div class="result-actions">
+          <button id="restartBtn" class="btn btn-secondary" type="button">重新测试</button>
+          <a class="btn btn-primary" href="../../index.html" style="text-decoration:none">返回测试主页</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const questions = [
+      { t: '刚认识一个让你很心动的人，你通常会：', options: ['先观察，至少确认对方也有意思再推进。','会多留意，但不会太明显。','会开始期待下一次互动。','会忍不住想办法制造聊天和见面。','已经在想你们会不会很配、会不会有以后。'] },
+      { t: '对方两小时没回消息，你第一反应更像：', options: ['可能在忙，我继续忙自己的。','会看一眼，但不至于多想。','会想他是不是看到了没回。','会开始回看前面对话找原因。','直接脑补他态度变了，心情都被带走。'] },
+      { t: '对方突然给你一点点偏爱，你会：', options: ['记下，但先不放大。','有点开心，不过继续观察。','当天心情都会变好。','会开始反复回味这些细节。','已经默认这是某种特别信号。'] },
+      { t: '朋友提醒你“别太快上头”，你更可能：', options: ['觉得他说得对。','嘴上不服，心里会收着点。','说知道，但其实还是会想。','表示我能控制，其实根本控制不住。','直接承认：没办法，我已经进去了。'] },
+      { t: '暧昧期你最容易做的事是：', options: ['保持节奏，不主动过度暴露。','偶尔点开聊天框，但还能克制住。','偷偷看对方社媒或状态。','把一些小细节记得非常清楚。','已经开始写脑内恋爱连续剧。'] },
+      { t: '对方说“最近很忙”，你更可能：', options: ['好，先忙，等你有空。','理解，但会稍微观察一下。','会有点失落。','嘴上理解，心里已经开始失衡。','一边理解一边难受，还想确认是不是在敷衍我。'] },
+      { t: '你在关系里最容易失控的点是：', options: ['我通常不太会失控。','会偷偷在意，但不外露。','容易被氛围和语气带动。','容易被忽冷忽热影响。','只要喜欢上，就很难保持平常心。'] },
+      { t: '关系一冷下来时，你更像：', options: ['先冷静，等情绪过去再谈。','表面淡定，其实心里很堵。','会反复想是不是自己哪里没做好。','会忍不住试探对方还在不在意。','会在“想立刻解决”和“想直接逃跑”之间疯狂横跳。'] },
+      { t: '如果要给喜欢的人准备东西，你通常会：', options: ['看情况，不会太超前。','会准备，但尽量自然一点。','会花心思做点有仪式感的。','会连细节和惊喜都提前想好。','还没确定关系，就已经按恋爱标准在准备。'] },
+      { t: '深夜一个人时，你最像：', options: ['很少因为感情睡不着。','会偶尔想到，但还好。','会去回看聊天记录或朋友圈。','会越想越上头。','能把一句话反复想出十种含义。'] },
+      { t: '你最怕自己在感情里变成：', options: ['完全失去自己的节奏。','表面装没事，心里其实很在意。','被一点点信号吊着走。','明明察觉不对还舍不得退。','一喜欢上，整个世界就只剩这件事。'] },
+      { t: '下面哪句话最像你？', options: ['心动可以，但我先保留判断。','我可以嘴硬，但不代表我不在意。','只要氛围到了，我真的会加戏。','我越喜欢，越容易被细节牵着走。','一旦上头，我自己都拦不住自己。'] }
+    ];
+
+    const resultBands = [
+      {
+        min: 12, max: 19, name: '防沉迷模式', emoji: '🧊',
+        intro: '你不是不会心动，而是系统自带风险控制。别人刚开始上头时，你还在看证据、看行动、看值不值得。',
+        core: '心动可以，失控不行',
+        action: '先观察，再投入',
+        risk: '容易被说“太清醒”',
+        quote: '再喜欢，也得先过我这一关。',
+        advice: '可以偶尔把喜欢表达得更明显一点，别总让别人猜你有没有认真。',
+        desc: '你的恋爱脑浓度并不高。你很少因为一点暧昧信号就立刻失去节奏，也不会因为对方一次没回消息就把整晚心情搭进去。\n\n你在关系里最强的地方，是边界感和判断力在线。喜欢归喜欢，但你会本能地确认对方的行动够不够真、关系有没有继续投入的价值。别人可能会觉得你慢、你稳、你不容易上头，但这恰恰说明你很少把自己轻易交出去。\n\n你真正要注意的，不是太恋爱脑，而是有时候太会收着。你已经不是容易失控的人了，下一步反而是学会在安全的关系里把喜欢表达得更清楚。'
+      },
+      {
+        min: 20, max: 27, name: '嘴硬心软型', emoji: '🫣',
+        intro: '你表面上看着还挺稳，嘴上也常常说“还好吧”，但其实很多细节你都记得很清楚。',
+        core: '嘴上淡定，心里有存档',
+        action: '偷偷在意，不太承认',
+        risk: '把喜欢全藏成沉默',
+        quote: '我没上头……只是刚好想起他而已。',
+        advice: '别把所有喜欢都藏起来。适度表达，比让对方一直猜要有效得多。',
+        desc: '你的恋爱脑属于“隐藏款”。你不太会大张旗鼓地表现自己多在意，也不一定会让身边人第一时间看出来，但这并不代表你真的无所谓。\n\n很多时候，你会偷偷记住聊天语气、某一句偏爱的表达、对方有没有多停留一秒。你不是没有上头反应，只是习惯把它收进心里，维持一种“我还挺清醒”的表面。\n\n你最像的地方，就是明明已经在意了，还想装得很稳。这样的你很容易在外表平静和内心波动之间来回拉扯。对你来说，真正有用的不是继续嘴硬，而是学会把在意说成一句正常的话。'
+      },
+      {
+        min: 28, max: 35, name: '氛围脑补型', emoji: '🌙',
+        intro: '你很吃感觉，也很吃细节。只要氛围一到，你的大脑就会自动开始剪预告片、写番外、做后续设想。',
+        core: '一点信号，就能自己续写三集',
+        action: '反复回味气氛和细节',
+        risk: '把想象当成关系进度',
+        quote: '他是不是其实……有一点点特别？',
+        advice: '脑补可以有，但关键还是看行动。别让氛围感代替真实推进。',
+        desc: '你的恋爱脑不是最冲的，但一定是很会“加戏”的。你很容易被聊天语气、眼神停顿、晚安方式、某个细小照顾击中，然后在心里迅速把这些片段放大。\n\n这种能力让你很会感受暧昧，也很会从关系里捕捉浪漫的部分。可它的副作用也很明显：有时候现实只推进了一小步，你心里的剧情已经跑到了下一阶段。\n\n你和高浓度恋爱脑最大的区别是，你未必真的立刻付出很多，但你会先在情绪和想象里投入很多。对你最重要的提醒，是把“我感觉到了”与“关系真的推进了”区分开。'
+      },
+      {
+        min: 36, max: 43, name: '拉扯试探型', emoji: '🎣',
+        intro: '你越喜欢，越会盯信号；越在意，越想确认。你不是毫无判断力，而是很难在不确定里保持平常心。',
+        core: '一边试探，一边等回应',
+        action: '靠细节确认自己有没有被在意',
+        risk: '被忽冷忽热牵着情绪走',
+        quote: '他到底是在意，还是只是顺手？',
+        advice: '少一点试探，多一点直接表达。真正稳定的关系，不该只靠猜。',
+        desc: '你的恋爱脑已经进入明显在线的状态了。你不会一开始就完全失控，但只要你认真在意一个人，你就会非常关注对方的反馈、节奏和态度变化。\n\n你会看消息速度、看语气冷热、看今天和昨天有没有不一样。你也许不会承认自己在等，但你确实会在意。你最容易陷进去的，不是单纯的甜，而是不确定本身带来的拉扯感。\n\n这让你在关系里很敏锐，但也容易疲惫。因为当你开始靠试探和猜测确定安全感时，你的心情就会变得很依赖对方当天的状态。你需要的不是更多分析，而是更直接、更稳定的沟通。'
+      },
+      {
+        min: 44, max: 51, name: '付出爆冲型', emoji: '💌',
+        intro: '你一旦动心，就很难只停在“想一想”这个阶段。你会想推进、想见面、想付出、想把喜欢变得有实感。',
+        core: '上头之后，热情直接拉满',
+        action: '主动投入、主动安排、主动靠近',
+        risk: '关系还没定，投入已经很深',
+        quote: '我不是不清醒，我只是想对他更好一点。',
+        advice: '热情是优点，但节奏也很重要。别在关系还没坐稳时，先把自己全交出去。',
+        desc: '你的恋爱脑属于行动派。别人可能还在脑补，你已经开始准备、开始计划、开始把喜欢落到现实里。你不满足于只在心里想，你更想让关系真的往前走。\n\n这种投入感很有感染力，也很容易让人感受到你的真诚。可与此同时，你也容易在关系还没有完全明确的时候，就先把自己的情绪、时间和心力投入太多。\n\n你最值得珍惜的地方，是你不怕认真、不怕付出。但也正因为这样，你更需要提醒自己：真正健康的关系，不是一个人一直爆冲，而是两个人的投入慢慢对齐。'
+      },
+      {
+        min: 52, max: 60, name: '全糖失守型', emoji: '🍬',
+        intro: '你的恋爱脑不是“有一点”，而是几乎一旦心动就会全线接管。消息、细节、期待、情绪，都会一起上线。',
+        core: '喜欢一来，理智先下线一半',
+        action: '高强度在意，高频率波动',
+        risk: '把对方的反馈变成自己一天的天气',
+        quote: '我知道自己上头了，但我真的停不下来。',
+        advice: '先把睡眠、节奏和生活抓回来。喜欢可以浓，但不能把自己整个淹掉。',
+        desc: '你的恋爱脑浓度已经到“高能预警”级别。你不是简单地会心动，而是很容易在短时间内被关系占据大量注意力。对方一句话、一个反应、一次冷热变化，都可能明显影响你的状态。\n\n你会投入得很深，也会期待得很快。你可能一边知道自己有点太上头了，一边又真的很难把这种情绪压下来。对你来说，恋爱脑最明显的表现，不只是想很多，而是你的整个日常节奏都容易被喜欢的人牵动。\n\n但这也说明你是一个感受力很强、投入能力很高的人。你不是不真诚，恰恰是太真了。你最需要学会的，不是别喜欢，而是在喜欢里把自己也一起照顾好。'
+      }
+    ];
+
+    const screens = {
+      intro: document.getElementById('intro'),
+      test: document.getElementById('test'),
+      loading: document.getElementById('loading'),
+      result: document.getElementById('result')
+    };
+
+    const app = { answers: {}, index: 0 };
+    const qList = document.getElementById('questionList');
+    const pBar = document.getElementById('progressBar');
+    const pText = document.getElementById('progressText');
+
+    function show(name) {
+      Object.entries(screens).forEach(([k, v]) => v.classList.toggle('active', k === name));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderQuestions() {
+      qList.innerHTML = '';
+      questions.forEach((q, idx) => {
+        const el = document.createElement('article');
+        el.className = idx === app.index ? 'question-card active' : 'question-card';
+        el.innerHTML = `
+          <div class="qmeta">
+            <span class="badge">第 ${idx + 1} 题</span>
+            <span>单题推进模式 · 共 ${questions.length} 题</span>
+          </div>
+          <div class="qtitle">${q.t}</div>
+          <div class="options">
+            ${q.options.map((o, j) => `
+              <label class="option">
+                <input type="radio" name="q${idx}" value="${j}" ${String(app.answers[idx]) === String(j) ? 'checked' : ''} />
+                <div class="option-code">${String.fromCharCode(65 + j)}</div>
+                <div class="option-text">${o}</div>
+              </label>
+            `).join('')}
+          </div>
+        `;
+        qList.appendChild(el);
+      });
+      qList.querySelectorAll('input').forEach(input => input.addEventListener('click', e => {
+        app.answers[Number(e.target.name.slice(1))] = Number(e.target.value);
+        updateProgress();
+        if (app.index < questions.length - 1) {
+          setTimeout(() => { app.index += 1; renderQuestions(); }, 220);
+        }
+      }));
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const done = Object.keys(app.answers).length;
+      const total = questions.length;
+      pBar.style.width = `${done / total * 100}%`;
+      pText.textContent = `${done} / ${total}`;
+      document.getElementById('prevBtn').hidden = app.index === 0;
+      const answered = app.answers[app.index] !== undefined;
+      const next = document.getElementById('nextBtn');
+      const submit = document.getElementById('submitBtn');
+      next.disabled = !answered;
+      if (app.index === total - 1) {
+        next.style.display = 'none';
+        submit.style.display = 'inline-flex';
+        submit.disabled = done < total;
+      } else {
+        next.style.display = 'inline-flex';
+        submit.style.display = 'none';
+      }
+    }
+
+    function calcScore() {
+      return questions.reduce((sum, _, idx) => sum + ((app.answers[idx] ?? 0) + 1), 0);
+    }
+
+    function calcPercent(score) {
+      return Math.round(((score - questions.length) / (questions.length * 4)) * 100);
+    }
+
+    function getBand(score) {
+      return resultBands.find(item => score >= item.min && score <= item.max) || resultBands[resultBands.length - 1];
+    }
+
+    function renderBasics(result, percent) {
+      const grid = document.getElementById('basicGrid');
+      const basics = {
+        '爆击指数': `${percent}%`,
+        '当前状态': result.core,
+        '高危动作': result.risk,
+        '常见操作': result.action,
+        '恋爱台词': result.quote,
+        '清醒建议': result.advice
+      };
+      grid.innerHTML = Object.entries(basics).map(([label, value]) => `
+        <div class="basic-item">
+          <div class="basic-label">${label}</div>
+          <div class="basic-value">${value}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderResult() {
+      const score = calcScore();
+      const percent = calcPercent(score);
+      const result = getBand(score);
+      document.getElementById('resultName').textContent = result.name;
+      document.getElementById('avatarText').textContent = result.emoji;
+      document.getElementById('scorePercent').textContent = `${percent}%`;
+      document.getElementById('resultIntro').textContent = result.intro;
+      document.getElementById('resultDesc').textContent = result.desc;
+      renderBasics(result, percent);
+      show('result');
+    }
+
+    function startTest() {
+      app.answers = {};
+      app.index = 0;
+      renderQuestions();
+      show('test');
+    }
+
+    document.getElementById('startBtn').addEventListener('click', startTest);
+    document.getElementById('backHomeBtn').addEventListener('click', () => {
+      if (!Object.keys(app.answers).length || confirm('当前答题进度会丢失，确认返回主页吗？')) location.href = '../../index.html';
+    });
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      if (app.index > 0) { app.index -= 1; renderQuestions(); }
+    });
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      if (app.index < questions.length - 1) { app.index += 1; renderQuestions(); }
+    });
+    document.getElementById('submitBtn').addEventListener('click', () => {
+      show('loading');
+      const logs = ['读取你的上头反应中…', '计算心动失控阈值中…', '生成你的恋爱脑结果页中…'];
+      const text = document.getElementById('loadingText');
+      let i = 0;
+      const timer = setInterval(() => {
+        if (i < logs.length) text.textContent = logs[i++];
+        else { clearInterval(timer); renderResult(); }
+      }, 560);
+    });
+    document.getElementById('restartBtn').addEventListener('click', startTest);
+  </script>
+</body>
+</html>
