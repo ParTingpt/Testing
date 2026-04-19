@@ -98,17 +98,17 @@
 
     <section id="intro" class="screen active">
       <div class="hero card">
-        <div class="eyebrow">娱乐向 · 爆款恋爱话题测试</div>
+        <div class="eyebrow">趣味恋爱测试 · 看看你有多容易上头</div>
         <h1>《你的恋爱脑爆击指数测试》</h1>
         <p class="sub">这套测试测的不是你会不会爱人，而是你一心动会怎么上头：是嘴硬心软、氛围脑补、反复试探、付出爆冲，还是直接全糖失守。做完之后，你会得到一个很适合截图分享的恋爱脑结果页。</p>
         <div class="hero-tips">
-          <span class="pill">12题爆款版</span>
+          <span class="pill">12题</span>
           <span class="pill">单题推进</span>
           <span class="pill">结果页可截图</span>
           <span class="pill">6种恋爱脑状态</span>
         </div>
         <div class="actions">
-          <div class="hint">作答时请选“现实里的你”，不要选你希望自己看起来最清醒的样子。</div>
+          <div class="hint">请按第一反应作答，选最像现实中你的那个答案。</div>
           <button id="startBtn" class="btn btn-primary" type="button">开始测试</button>
         </div>
       </div>
@@ -134,7 +134,7 @@
     <section id="loading" class="screen">
       <div class="loading-wrap card">
         <div class="spinner"></div>
-        <h2>正在计算你的恋爱脑爆击指数…</h2>
+        <h2>正在生成你的结果…</h2>
         <p id="loadingText">读取你的上头反应中…</p>
       </div>
     </section>
@@ -147,7 +147,7 @@
               <div class="avatar" id="avatarText">🧊</div>
               <div class="photo-name" id="resultName">防沉迷模式</div>
               <div class="score-chip">恋爱脑爆击指数 <span id="scorePercent">18%</span></div>
-              <div class="photo-note">当前为调试图卡，正式上线时也可继续保留这种可截图样式</div>
+              <div class="photo-note">截个图，看看你的恋爱脑状态标签。</div>
             </div>
           </div>
         </div>
@@ -276,7 +276,7 @@
         el.innerHTML = `
           <div class="qmeta">
             <span class="badge">第 ${idx + 1} 题</span>
-            <span>单题推进模式 · 共 ${questions.length} 题</span>
+            <span>共 ${questions.length} 题</span>
           </div>
           <div class="qtitle">${q.t}</div>
           <div class="options">
@@ -373,7 +373,7 @@
 
     document.getElementById('startBtn').addEventListener('click', startTest);
     document.getElementById('backHomeBtn').addEventListener('click', () => {
-      if (!Object.keys(app.answers).length || confirm('当前答题进度会丢失，确认返回主页吗？')) location.href = '../../index.html';
+      if (!Object.keys(app.answers).length || confirm('返回主页后，本次作答不会保留，确认返回吗？')) location.href = '../../index.html';
     });
     document.getElementById('prevBtn').addEventListener('click', () => {
       if (app.index > 0) { app.index -= 1; renderQuestions(); }
@@ -383,7 +383,7 @@
     });
     document.getElementById('submitBtn').addEventListener('click', () => {
       show('loading');
-      const logs = ['读取你的上头反应中…', '计算心动失控阈值中…', '生成你的恋爱脑结果页中…'];
+      const logs = ['读取你的上头反应中…', '计算你的恋爱脑指数中…', '生成你的结果页中…'];
       const text = document.getElementById('loadingText');
       let i = 0;
       const timer = setInterval(() => {
