@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>《你在别人眼里有多难追测试》</title>
+<style>
+:root {
+  --text:#231a33; --muted:#6f6782; --line:#e6def3; --soft:#f2ecfb; --accent:#8b5cf6;
+  --shadow:0 18px 48px rgba(139,92,246,.10); --radius:24px;
+}
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; }
+body {font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:radial-gradient(circle at top left,rgba(139,92,246,.12),transparent 32%),linear-gradient(180deg,#fcfbff 0%,#f8f6fc 44%,#f4effb 100%);color:var(--text);min-height:100vh;}
+.shell {max-width:1040px;margin:0 auto;padding:18px 14px 44px;}
+.card {background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);}
+.back {display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:14px;background:#fff;border:1px solid var(--line);color:var(--accent);font-weight:700;text-decoration:none;margin-bottom:14px;}
+.hero,.test-wrap,.loading-wrap,.result-wrap {padding:20px;}
+.eyebrow {display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--accent);font-size:12px;font-weight:700;margin-bottom:14px;}
+h1 {margin:0;font-size:clamp(30px,7vw,46px);line-height:1.08;letter-spacing:-.03em;}
+.sub {margin-top:14px;color:var(--muted);line-height:1.9;font-size:15px;}
+.hero-tips {display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+.pill {padding:8px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:12px;color:var(--muted);}
+.actions {display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px;}
+.hint {font-size:13px;color:var(--muted);line-height:1.8;}
+.btn {border:0;cursor:pointer;border-radius:14px;padding:13px 18px;font-weight:800;font:inherit;transition:transform .16s ease,opacity .16s ease;}
+.btn:hover {transform:translateY(-1px);}
+.btn:disabled {opacity:.55;cursor:not-allowed;transform:none;}
+.btn-primary {background:linear-gradient(100deg,#7c3aed,#8b5cf6 40%,#ec4899 100%);color:#fff;box-shadow:0 12px 28px rgba(139,92,246,.18);}
+.btn-secondary {background:#fff;color:var(--accent);border:1px solid var(--line);}
+.screen {display:none;}
+.screen.active {display:block;}
+.dock {position:sticky;top:10px;z-index:20;margin-top:16px;padding:16px 18px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;background:rgba(252,251,255,.92);backdrop-filter:blur(10px);}
+.progress {flex:1;min-width:220px;height:10px;background:#efe8fb;border-radius:999px;overflow:hidden;}
+.progress>span {display:block;height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#ec4899);transition:width .2s ease;}
+.progress-text {font-size:13px;color:var(--muted);white-space:nowrap;}
+.question-card {display:none;border:1px solid var(--line);border-radius:20px;padding:18px;background:linear-gradient(180deg,#fff,#fbf8ff);}
+.question-card.active {display:block;}
+.qmeta {display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;color:var(--muted);font-size:12px;}
+.badge {display:inline-flex;align-items:center;padding:7px 12px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--accent);font-weight:700;}
+.qtitle {font-size:20px;line-height:1.75;}
+.options {display:grid;gap:10px;margin-top:18px;}
+.option {display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:16px;border:1px solid var(--line);background:#fff;cursor:pointer;}
+.option:hover {background:#fdfbff;border-color:#cfbee9;}
+.option input {margin-top:4px;accent-color:var(--accent);}
+.option-code {min-width:22px;font-weight:800;color:var(--accent);}
+.option-text {flex:1;line-height:1.85;}
+.spinner {display:inline-block;width:44px;height:44px;border:4px solid #ece4f8;border-radius:50%;border-top-color:var(--accent);animation:spin .8s linear infinite;}
+@keyframes spin {to {transform:rotate(360deg);}}
+.loading-wrap {text-align:center;padding:72px 20px;}
+.loading-wrap h2 {margin:22px 0 0;font-size:22px;}
+.loading-wrap p {margin-top:10px;color:var(--muted);font-size:14px;}
+.result-wrap {display:grid;gap:16px;}
+.result-grid {display:grid;grid-template-columns:1.05fr .95fr;gap:16px;}
+.box {border:1px solid var(--line);border-radius:18px;padding:18px;background:linear-gradient(180deg,#fff,#fbf8ff);}
+.image-card {overflow:hidden;}
+.character-image {width:100%;height:auto;display:block;border-radius:16px;border:1px solid var(--line);background:#fff;}
+.box h3 {margin:0 0 10px;font-size:18px;}
+.box p {margin:0;color:var(--muted);line-height:1.95;font-size:15px;white-space:pre-wrap;}
+.basic-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.basic-item {border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;}
+.basic-label {font-size:12px;color:var(--accent);font-weight:800;margin-bottom:6px;}
+.basic-value {color:var(--muted);line-height:1.8;font-size:14px;}
+.note {font-size:13px;color:var(--muted);line-height:1.85;}
+.result-actions {display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.preview-badge {display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);color:#d946ef;font-size:12px;font-weight:800;margin-top:12px;}
+@media(max-width:820px) { .result-grid {grid-template-columns:1fr;} }
+@media(max-width:720px) { .hero,.test-wrap,.loading-wrap,.result-wrap {padding:16px;} .qtitle {font-size:18px;} .basic-grid {grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<main class="shell">
+  <a class="back" href="../../index.html">← 返回测试主页</a>
+  <section id="intro" class="screen active">
+    <div class="hero card">
+      <div class="eyebrow">娱乐向 · 恋爱氛围测试 · 难追程度测评</div>
+      <h1>《你在别人眼里有多难追测试》</h1>
+      <p class="sub">这套测试测的不是你有没有人喜欢，而是你在别人眼里到底是“很好靠近”，还是“像要过很多轮筛选才能接近”。它不走单纯累加路线，而是根据你的慢热程度、边界感、回应清晰度和筛选标准做综合判断，最后给你一个更像真实恋爱气场的结果。</p>
+      <div class="hero-tips">
+        <span class="pill">12题正式版</span><span class="pill">多维综合计分</span><span class="pill">5种难追类型</span><span class="pill">结果页可截图</span>
+      </div>
+      <div class="preview-badge">结果类型：恋爱绿灯型 / 慢热解锁型 / 高门槛筛选型 / 最终面试官型 / 隐藏Boss型</div>
+      <div class="actions">
+        <div class="hint">作答时请选择“现实里别人最容易感受到的你”，不要选你理想中的恋爱状态。</div>
+        <button id="startBtn" class="btn btn-primary" type="button">开始测试</button>
+      </div>
+    </div>
+  </section>
+  <section id="test" class="screen">
+    <div class="dock card"><div class="progress"><span id="progressBar"></span></div><div class="progress-text" id="progressText">0 / 12</div></div>
+    <div class="test-wrap card">
+      <div id="questionList"></div>
+      <div class="actions">
+        <button id="backHomeBtn" class="btn btn-secondary" type="button">返回主页</button>
+        <button id="prevBtn" class="btn btn-secondary" type="button" hidden>上一题</button>
+        <div style="flex:1"></div>
+        <button id="nextBtn" class="btn btn-secondary" type="button" disabled>下一题</button>
+        <button id="submitBtn" class="btn btn-primary" type="button" style="display:none" disabled>查看结果</button>
+      </div>
+    </div>
+  </section>
+  <section id="loading" class="screen">
+    <div class="loading-wrap card"><div class="spinner"></div><h2>正在评估你的难追气场…</h2><p id="loadingText">读取你的边界感和回应模式中…</p></div>
+  </section>
+  <section id="result" class="screen">
+    <div class="result-wrap card">
+      <div class="result-grid">
+        <div class="box image-card"><h3>结果图卡</h3><img id="resultImage" class="character-image" alt="结果图卡" /></div>
+        <div class="box"><h3>结果概览</h3><p id="resultIntro"></p></div>
+      </div>
+      <div class="box"><h3>你的难追画像</h3><div class="basic-grid" id="basicGrid"></div></div>
+      <div class="box"><h3>结果解释</h3><p id="resultDesc"></p></div>
+      <div class="note">计分说明：本测试不是简单“每题加一分”，而是把你的作答拆成慢热程度、边界感、回应清晰度、筛选标准与可接近度五个部分，综合生成别人眼里的“难追难度”。因此同分区间里，不同作答风格的人也能得到更贴脸的结果。</div>
+      <div class="result-actions">
+        <button id="restartBtn" class="btn btn-secondary" type="button">重新测试</button>
+        <a class="btn btn-primary" href="../../index.html" style="text-decoration:none">返回测试主页</a>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+const questions = [{"t": "刚认识你的人，最容易对你产生哪种感觉？", "options": [["看着挺好接近，但真正熟起来没那么快。", {"warm": 1, "reserve": 1}], ["气场不错，但不太敢贸然靠近。", {"reserve": 2, "standards": 1}], ["会觉得你不高冷，只是要先通过你的观察期。", {"warm": 1, "clarity": 1, "reserve": 1}], ["第一眼就觉得：这个人应该不是随便谁都能追到。", {"reserve": 2, "standards": 2}]]}, {"t": "别人主动找你聊天时，你更常见的状态是？", "options": [["只要对方自然一点，我通常会接得住话。", {"warm": 2}], ["会聊，但我不会一下子把热情全给出来。", {"warm": 1, "reserve": 1}], ["看心情和对方表现，不是每个人都值得我认真回。", {"standards": 2, "reserve": 1}], ["如果没有戳中我感兴趣的点，我可能就礼貌结束。", {"reserve": 2, "clarity": 1}]]}, {"t": "面对暧昧期的试探，你更像哪一种？", "options": [["你进一步，我也会适度给回应。", {"warm": 2, "clarity": 1}], ["我会先观察一阵子，再决定要不要放你进来。", {"reserve": 2}], ["我会给一点信号，但不会让人太快看透我。", {"reserve": 1, "clarity": 1}], ["我会让对方先证明诚意，而不是我先上头。", {"standards": 2, "reserve": 1}]]}, {"t": "如果有人对你有好感，你希望对方怎么做最加分？", "options": [["真诚一点，别太油。", {"warm": 1, "clarity": 2}], ["稳定出现，让我慢慢确认你不是一时兴起。", {"reserve": 2, "clarity": 1}], ["有分寸地表达喜欢，不要上来就越界。", {"standards": 2, "clarity": 1}], ["拿出行动力和判断力，让我觉得你是有实力的。", {"standards": 2, "reserve": 1}]]}, {"t": "你在感情里最不喜欢别人哪种表现？", "options": [["忽冷忽热，像在玩猜谜。", {"clarity": 2}], ["太快上头，搞得我压力很大。", {"reserve": 2}], ["没有边界感，动不动就管太多。", {"standards": 2, "reserve": 1}], ["嘴上说得很好，实际一点诚意都没有。", {"standards": 2, "clarity": 1}]]}, {"t": "别人约你出来时，你的默认反应更接近：", "options": [["只要我有空、也不反感，基本可以约。", {"warm": 2}], ["可以约，但我会先看这次约得有没有诚意。", {"warm": 1, "standards": 1}], ["我不会轻易答应，除非我已经觉得你还不错。", {"reserve": 2, "standards": 1}], ["约我不难，但想约到我愿意认真投入很难。", {"reserve": 1, "standards": 2}]]}, {"t": "你会怎么判断一个人值不值得继续了解？", "options": [["相处舒不舒服。", {"warm": 2}], ["看对方是不是稳定、靠谱。", {"clarity": 1, "standards": 1}], ["看他有没有分寸，也有没有持续投入。", {"standards": 2, "clarity": 1}], ["看他能不能经得住我后续的观察和筛选。", {"reserve": 2, "standards": 2}]]}, {"t": "在别人眼里，你的边界感通常是：", "options": [["有，但不锋利。", {"warm": 2}], ["挺清楚的，只是我说话不会太重。", {"clarity": 2}], ["比较强，靠太近我会立刻后退。", {"reserve": 2}], ["非常明确，谁能进来要看我愿不愿意。", {"standards": 2, "reserve": 1}]]}, {"t": "对方向你表达喜欢时，你更容易出现哪种反应？", "options": [["如果我也有感觉，回应会比较明显。", {"warm": 2, "clarity": 1}], ["我不会立刻拒绝，但也不会马上给答案。", {"reserve": 2}], ["我会继续观察，看他是不是只会说不会做。", {"standards": 2, "clarity": 1}], ["我表面平静，但心里已经把对方拉进评估流程。", {"standards": 2, "reserve": 1}]]}, {"t": "你的“难追”更多来自哪里？", "options": [["不是难追，只是我不喜欢暧昧拉扯。", {"clarity": 2}], ["我慢热，所以别人得给我一点时间。", {"reserve": 2}], ["我会认真筛人，不会因为寂寞就随便开始。", {"standards": 2}], ["我不是故意难追，只是能让我心动的人门槛确实高。", {"standards": 2, "reserve": 1}]]}, {"t": "如果关系推进得太快，你通常会：", "options": [["提醒一下节奏，慢一点就好。", {"clarity": 2}], ["本能往后退，想拉开一点距离。", {"reserve": 2}], ["先观察对方是不是只图新鲜感。", {"standards": 2}], ["会直接把门重新关上，除非对方真的很稳。", {"reserve": 1, "standards": 2}]]}, {"t": "你最像下面哪句话？", "options": [["我不是高冷，我只是对值得的人会更柔软。", {"warm": 2, "reserve": 1}], ["我需要时间，不代表我没有感觉。", {"reserve": 2, "warm": 1}], ["想追我可以，但别拿低配诚意来试。", {"standards": 2, "clarity": 1}], ["想走进我这里，基本得过好几轮。", {"standards": 2, "reserve": 2}]]}];
+const results = {"恋爱绿灯型": {"range": [0, 27], "subtitle": "你给人的感觉不是“难追”，而是“有回应”。", "desc": "在别人眼里，你的门没有焊死，甚至还带一点“只要方式对，我就会接住你”的信号。你不是没有标准，而是不会故意把喜欢这件事弄得很复杂。只要对方真诚、自然、不越界，你通常愿意给机会。\n\n你的难追程度偏低，不是因为你随便，而是因为你表达得相对清楚。别人能读到你的边界，也能读到你的好感，所以不会一直在门口打转。追你的人会觉得：有戏，而且不是全靠猜。", "advice": "适合你的追求方式：真诚直接、节奏自然、别太油。别人在你这里最容易加分的，不是套路，而是舒服和靠谱。"}, "慢热解锁型": {"range": [28, 39], "subtitle": "你不是难追，你只是需要一点时间加载。 ", "desc": "在别人眼里，你最明显的特点是慢热。你不会因为一点点心动就立刻打开全部权限，也不会在关系刚开始时给出特别猛烈的回应。你更像一扇需要慢慢解锁的门，得先稳定出现、让你建立安全感，后续才会越来越好接近。\n\n你的难追程度不算高，但也绝对不是“一下就能拿下”的类型。别人追你时常会觉得：你不是没感觉，只是进度条真的走得慢。只要对方不心急、不乱试探，很多关系其实都有机会继续往下走。", "advice": "适合你的追求方式：稳定、耐心、持续投入。越是急着要结果，越容易被你判出局。"}, "高门槛筛选型": {"range": [40, 51], "subtitle": "你不是在谈恋爱，你像在做认真筛选。 ", "desc": "在别人眼里，你的“难追”很大一部分来自标准感。你会看边界、看投入、看诚意，也会看对方到底是不是只会说漂亮话。不是谁靠近你都能进入下一轮，更不是会聊天、会制造氛围就够了。\n\n你给人的感觉往往是：可以接近，但想真正推进关系得拿出点实力。别人会意识到，追你不能只靠嘴甜和热情，还得靠稳定、分寸感和真实行动。所以你属于难度中上，但难在有逻辑，不是难在作。", "advice": "适合你的追求方式：行动比话更重要，边界感和持续性缺一不可。"}, "最终面试官型": {"range": [52, 63], "subtitle": "别人追你时，常像在经历好几轮终面。 ", "desc": "在别人眼里，你不是简单的慢热，也不只是有标准，你更像一个会层层观察、层层判断的人。你会看细节、看稳定性、看价值观，也会看对方在不同阶段是不是还能保持同样的投入。很多人可能第一轮就被你刷掉，能留到后面的通常都不简单。\n\n你的难追程度已经很高了。不是因为你冷，而是因为你对“开始一段关系”这件事非常认真。别人靠近你时，常常会感受到一种很明显的压力：不是不能追，而是得足够靠谱，才有资格继续。", "advice": "适合你的追求方式：拿出持续诚意、情绪稳定和现实能力，别想靠速成拿结果。"}, "隐藏Boss型": {"range": [64, 200], "subtitle": "你在别人眼里，基本是恋爱副本的隐藏关。 ", "desc": "在别人眼里，你的难追程度已经不是普通级别，而是“看起来有入口，实际上层层设防”。你不一定故意高冷，也不一定总是拒人千里，但你会天然保留距离、严格筛选、谨慎给回应。想走近你，既要过边界关，又要过诚意关，还要过耐心和稳定性测试。\n\n很多人面对你时会直接进入“这题太难”的状态。因为你给人的感觉不是靠一时热情就能打动，而是要真的有长期投入的准备。你不轻易开始，所以一旦开始，往往也不是闹着玩的。", "advice": "适合你的追求方式：长期主义、稳定兑现、别试图投机取巧。"}};
+const screens = {
+  intro: document.getElementById('intro'),
+  test: document.getElementById('test'),
+  loading: document.getElementById('loading'),
+  result: document.getElementById('result')
+};
+const app = { answers: {}, index: 0 };
+const qList = document.getElementById('questionList');
+const pBar = document.getElementById('progressBar');
+const pText = document.getElementById('progressText');
+function show(name) {
+  Object.entries(screens).forEach(([k, v]) => v.classList.toggle('active', k === name));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function renderQuestions() {
+  qList.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const el = document.createElement('article');
+    el.className = idx === app.index ? 'question-card active' : 'question-card';
+    el.innerHTML = `<div class="qmeta"><span class="badge">第 ${idx + 1} 题</span><span>单题推进模式 · 共 ${questions.length} 题</span></div><div class="qtitle">${q.t}</div><div class="options">${q.options.map((o, j) => `<label class="option"><input type="radio" name="q${idx}" value="${j}" ${String(app.answers[idx]) === String(j) ? 'checked' : ''} /><div class="option-code">${String.fromCharCode(65 + j)}</div><div class="option-text">${o[0]}</div></label>`).join('')}</div>`;
+    qList.appendChild(el);
+  });
+  qList.querySelectorAll('input').forEach(input => input.addEventListener('click', e => {
+    app.answers[Number(e.target.name.slice(1))] = Number(e.target.value);
+    updateProgress();
+    if (app.index < questions.length - 1) setTimeout(() => { app.index += 1; renderQuestions(); }, 220);
+  }));
+  updateProgress();
+}
+function updateProgress() {
+  const done = Object.keys(app.answers).length;
+  const total = questions.length;
+  pBar.style.width = `${done / total * 100}%`;
+  pText.textContent = `${done} / ${total}`;
+  document.getElementById('prevBtn').hidden = app.index === 0;
+  const answered = app.answers[app.index] !== undefined;
+  const next = document.getElementById('nextBtn');
+  const submit = document.getElementById('submitBtn');
+  next.disabled = !answered;
+  if (app.index === total - 1) {
+    next.style.display = 'none'; submit.style.display = 'inline-flex'; submit.disabled = done < total;
+  } else {
+    next.style.display = 'inline-flex'; submit.style.display = 'none';
+  }
+}
+function calculateProfile() {
+  const dim = {warm:0, reserve:0, clarity:0, standards:0};
+  questions.forEach((q, idx) => {
+    const a = app.answers[idx];
+    if (a !== undefined) {
+      const scoreMap = q.options[a][1];
+      Object.entries(scoreMap).forEach(([k, v]) => dim[k] += v);
+    }
+  });
+  const rawHard = dim.reserve * 3 + dim.standards * 4 + (24 - dim.warm) * 1.5 + (18 - dim.clarity) * 1.2;
+  const hard = Math.round(rawHard);
+  return {...dim, hard};
+}
+function getResultKey(profile) {
+  for (const [key, info] of Object.entries(results)) {
+    const [min, max] = info.range;
+    if (profile.hard >= min && profile.hard <= max) return key;
+  }
+  return '隐藏Boss型';
+}
+function renderBasics(profile, resultKey) {
+  const grid = document.getElementById('basicGrid');
+  const rank = {
+    warm: profile.warm >= 14 ? '高' : profile.warm >= 9 ? '中' : '低',
+    reserve: profile.reserve >= 16 ? '高' : profile.reserve >= 10 ? '中' : '低',
+    clarity: profile.clarity >= 12 ? '高' : profile.clarity >= 7 ? '中' : '低',
+    standards: profile.standards >= 16 ? '高' : profile.standards >= 10 ? '中' : '低',
+  };
+  grid.innerHTML = [
+    ['最终结果', resultKey],
+    ['难追指数', profile.hard + ' / 100+'],
+    ['慢热程度', rank.reserve],
+    ['筛选标准', rank.standards],
+    ['可接近度', rank.warm],
+    ['回应清晰度', rank.clarity]
+  ].map(([label, value]) => `<div class="basic-item"><div class="basic-label">${label}</div><div class="basic-value">${value}</div></div>`).join('');
+}
+function buildResultSvg(name, subtitle) {
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8b5cf6" /><stop offset="60%" stop-color="#ec4899" /><stop offset="100%" stop-color="#f59e0b" /></linearGradient></defs>
+    <rect width="960" height="720" rx="42" fill="url(#g)" />
+    <circle cx="170" cy="120" r="170" fill="rgba(255,255,255,.14)" />
+    <circle cx="780" cy="130" r="140" fill="rgba(255,255,255,.12)" />
+    <circle cx="760" cy="560" r="210" fill="rgba(255,255,255,.08)" />
+    <rect x="72" y="76" width="248" height="46" rx="23" fill="rgba(255,255,255,.18)" />
+    <text x="102" y="107" font-size="24" font-weight="700" font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="white">你在别人眼里有多难追</text>
+    <rect x="78" y="210" width="804" height="310" rx="30" fill="rgba(255,255,255,.16)" stroke="rgba(255,255,255,.22)" />
+    <text x="480" y="340" text-anchor="middle" font-size="72" font-weight="800" font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="white">${name}</text>
+    <text x="480" y="406" text-anchor="middle" font-size="30" font-weight="700" font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="rgba(255,255,255,.95)">${subtitle}</text>
+    <text x="480" y="620" text-anchor="middle" font-size="24" font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="rgba(255,255,255,.92)">结果图卡 · 适合直接截图分享</text>
+  </svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+function renderResult() {
+  const profile = calculateProfile();
+  const key = getResultKey(profile);
+  const result = results[key];
+  document.getElementById('resultIntro').textContent = key + '｜' + result.subtitle + '\n\n' + result.advice;
+  document.getElementById('resultDesc').textContent = result.desc;
+  document.getElementById('resultImage').src = buildResultSvg(key, result.subtitle.trim());
+  document.getElementById('resultImage').alt = key + ' 结果图卡';
+  renderBasics(profile, key);
+  show('result');
+}
+function startTest() {
+  app.answers = {}; app.index = 0; renderQuestions(); show('test');
+}
+document.getElementById('startBtn').addEventListener('click', startTest);
+document.getElementById('backHomeBtn').addEventListener('click', () => {
+  if (!Object.keys(app.answers).length || confirm('当前答题进度会丢失，确认返回主页吗？')) location.href='../../index.html';
+});
+document.getElementById('prevBtn').addEventListener('click', () => { if (app.index > 0) { app.index -= 1; renderQuestions(); } });
+document.getElementById('nextBtn').addEventListener('click', () => { if (app.index < questions.length - 1) { app.index += 1; renderQuestions(); } });
+document.getElementById('submitBtn').addEventListener('click', () => {
+  show('loading');
+  const logs = ['读取你的边界感和回应模式中…','估算你的慢热指数和筛选标准中…','生成别人眼里的难追画像中…'];
+  const text = document.getElementById('loadingText');
+  let i = 0;
+  const timer = setInterval(() => {
+    if (i < logs.length) text.textContent = logs[i++];
+    else { clearInterval(timer); renderResult(); }
+  }, 560);
+});
+document.getElementById('restartBtn').addEventListener('click', startTest);
+</script>
+</body>
+</html>
