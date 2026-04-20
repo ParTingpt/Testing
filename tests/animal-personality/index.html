@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>《你的动物人格测试》</title>
+<style>
+:root {
+  --text:#231a33; --muted:#6f6782; --line:#e6def3; --soft:#f2ecfb; --accent:#8b5cf6;
+  --shadow:0 18px 48px rgba(139,92,246,.10); --radius:24px;
+}
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; }
+body {font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:radial-gradient(circle at top left,rgba(139,92,246,.12),transparent 32%),linear-gradient(180deg,#fcfbff 0%,#f8f6fc 44%,#f4effb 100%);color:var(--text);min-height:100vh;}
+.shell {max-width:1040px;margin:0 auto;padding:18px 14px 44px;}
+.card {background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);}
+.back {display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:14px;background:#fff;border:1px solid var(--line);color:var(--accent);font-weight:700;text-decoration:none;margin-bottom:14px;}
+.hero,.test-wrap,.loading-wrap,.result-wrap {padding:20px;}
+.eyebrow {display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--accent);font-size:12px;font-weight:700;margin-bottom:14px;}
+h1 {margin:0;font-size:clamp(30px,7vw,46px);line-height:1.08;letter-spacing:-.03em;}
+.sub {margin-top:14px;color:var(--muted);line-height:1.9;font-size:15px;}
+.hero-tips {display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+.pill {padding:8px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:12px;color:var(--muted);}
+.actions {display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px;}
+.hint {font-size:13px;color:var(--muted);line-height:1.8;}
+.btn {border:0;cursor:pointer;border-radius:14px;padding:13px 18px;font-weight:800;font:inherit;transition:transform .16s ease,opacity .16s ease;}
+.btn:hover {transform:translateY(-1px);}
+.btn:disabled {opacity:.55;cursor:not-allowed;transform:none;}
+.btn-primary {background:linear-gradient(100deg,#7c3aed,#8b5cf6 40%,#ec4899 100%);color:#fff;box-shadow:0 12px 28px rgba(139,92,246,.18);}
+.btn-secondary {background:#fff;color:var(--accent);border:1px solid var(--line);}
+.screen {display:none;}
+.screen.active {display:block;}
+.dock {position:sticky;top:10px;z-index:20;margin-top:16px;padding:16px 18px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;background:rgba(252,251,255,.92);backdrop-filter:blur(10px);}
+.progress {flex:1;min-width:220px;height:10px;background:#efe8fb;border-radius:999px;overflow:hidden;}
+.progress>span {display:block;height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#ec4899);transition:width .2s ease;}
+.progress-text {font-size:13px;color:var(--muted);white-space:nowrap;}
+.question-card {display:none;border:1px solid var(--line);border-radius:20px;padding:18px;background:linear-gradient(180deg,#fff,#fbf8ff);}
+.question-card.active {display:block;}
+.qmeta {display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;color:var(--muted);font-size:12px;}
+.badge {display:inline-flex;align-items:center;padding:7px 12px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--accent);font-weight:700;}
+.qtitle {font-size:20px;line-height:1.75;}
+.options {display:grid;gap:10px;margin-top:18px;}
+.option {display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:16px;border:1px solid var(--line);background:#fff;cursor:pointer;}
+.option:hover {background:#fdfbff;border-color:#cfbee9;}
+.option input {margin-top:4px;accent-color:var(--accent);}
+.option-code {min-width:22px;font-weight:800;color:var(--accent);}
+.option-text {flex:1;line-height:1.85;}
+.spinner {display:inline-block;width:44px;height:44px;border:4px solid #ece4f8;border-radius:50%;border-top-color:var(--accent);animation:spin .8s linear infinite;}
+@keyframes spin {to {transform:rotate(360deg);}}
+.loading-wrap {text-align:center;padding:72px 20px;}
+.loading-wrap h2 {margin:22px 0 0;font-size:22px;}
+.loading-wrap p {margin-top:10px;color:var(--muted);font-size:14px;}
+.result-wrap {display:grid;gap:16px;}
+.result-grid {display:grid;grid-template-columns:1.05fr .95fr;gap:16px;}
+.box {border:1px solid var(--line);border-radius:18px;padding:18px;background:linear-gradient(180deg,#fff,#fbf8ff);}
+.image-card {overflow:hidden;}
+.character-image {width:100%;height:auto;display:block;border-radius:16px;border:1px solid var(--line);background:#fff;}
+.box h3 {margin:0 0 10px;font-size:18px;}
+.box p {margin:0;color:var(--muted);line-height:1.95;font-size:15px;white-space:pre-wrap;}
+.basic-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.basic-item {border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;}
+.basic-label {font-size:12px;color:var(--accent);font-weight:800;margin-bottom:6px;}
+.basic-value {color:var(--muted);line-height:1.8;font-size:14px;}
+.note {font-size:13px;color:var(--muted);line-height:1.85;}
+.result-actions {display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.preview-badge {display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);color:#d946ef;font-size:12px;font-weight:800;margin-top:12px;}
+@media(max-width:820px) { .result-grid {grid-template-columns:1fr;} }
+@media(max-width:720px) { .hero,.test-wrap,.loading-wrap,.result-wrap {padding:16px;} .qtitle {font-size:18px;} .basic-grid {grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<main class="shell">
+  <a class="back" href="../../index.html">← 返回测试主页</a>
+
+  <section id="intro" class="screen active">
+    <div class="hero card">
+      <div class="eyebrow">娱乐向 · 动物人格匹配测试 · 图片素材版</div>
+      <h1>《你的动物人格测试》</h1>
+      <p class="sub">这套测试不测你“乖不乖”，而是看你在社交、压力、关系和行动选择里，更像哪一种动物。做完之后，你会得到一个动物结果页，包含图卡、动物简介、人格关键词和详细解释。</p>
+      <div class="hero-tips">
+        <span class="pill">16题正式版</span><span class="pill">8个动物</span><span class="pill">单题推进</span><span class="pill">结果页含图卡素材</span>
+      </div>
+      <div class="preview-badge">当前结果图为前端可直接展示的动物图卡素材，后续可替换为正式插画或图片资源</div>
+      <div class="actions">
+        <div class="hint">作答时请选择现实里更像你的反应，不要选你想成为的理想版本。</div>
+        <button id="startBtn" class="btn btn-primary" type="button">开始测试</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="test" class="screen">
+    <div class="dock card"><div class="progress"><span id="progressBar"></span></div><div class="progress-text" id="progressText">0 / 16</div></div>
+    <div class="test-wrap card">
+      <div id="questionList"></div>
+      <div class="actions">
+        <button id="backHomeBtn" class="btn btn-secondary" type="button">返回主页</button>
+        <button id="prevBtn" class="btn btn-secondary" type="button" hidden>上一题</button>
+        <div style="flex:1"></div>
+        <button id="nextBtn" class="btn btn-secondary" type="button" disabled>下一题</button>
+        <button id="submitBtn" class="btn btn-primary" type="button" style="display:none" disabled>查看结果</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="loading" class="screen">
+    <div class="loading-wrap card"><div class="spinner"></div><h2>正在匹配最接近的动物…</h2><p id="loadingText">整理你的社交和行动偏好中…</p></div>
+  </section>
+
+  <section id="result" class="screen">
+    <div class="result-wrap card">
+      <div class="result-grid">
+        <div class="box image-card"><h3>动物图卡</h3><img id="resultImage" class="character-image" alt="动物图卡" /></div>
+        <div class="box"><h3>动物简介</h3><p id="resultIntro"></p></div>
+      </div>
+      <div class="box"><h3>人格关键词</h3><div class="basic-grid" id="basicGrid"></div></div>
+      <div class="box"><h3>结果解释</h3><p id="resultDesc"></p></div>
+      <div class="note">说明：本测试主要用于娱乐与自我观察，不替代专业心理评估。当前页面使用的是前端生成的动物图卡素材，优先保证排版、移动端适配与结果展示效果；后续如果你要换成正式图片，只需要替换图片生成函数或图片地址即可。</div>
+      <div class="result-actions">
+        <button id="restartBtn" class="btn btn-secondary" type="button">重新测试</button>
+        <a class="btn btn-primary" href="../../index.html" style="text-decoration:none">返回测试主页</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const questions = [
+  { t: '周末突然空出来一整天，你最想怎么过？', options: [['去探一家没去过的店，顺便看看有没有新鲜事。','狐狸'], ['约上朋友出门，最好一路都有互动和笑点。','海豚'], ['找个安静地方待着，顺手把最近想不明白的事想清楚。','猫头鹰'], ['不设计划，慢慢醒、慢慢吃、慢慢过。','水豚']] },
+  { t: '团队里突然冒出一个麻烦问题，你第一反应更像：', options: [['先站出来把人拢住，别让局面散掉。','狼'], ['先和问题拉开一点距离，别让混乱一下子贴到脸上。','猫'], ['先把流程和分工捋清，再决定谁做什么。','企鹅'], ['先看看谁最焦虑，别让场面越滚越大。','小熊']] },
+  { t: '别人对你的第一印象，更容易是哪一种？', options: [['看着机灵，会看场面，也挺会转弯。','狐狸'], ['很有参与感，聊起来不容易冷场。','海豚'], ['安静但不木，像是脑子一直在转。','猫头鹰'], ['松弛、不急，待在旁边就让人没那么绷。','水豚']] },
+  { t: '发生正面冲突时，你更像：', options: [['不会让重要的人一个人顶着。','狼'], ['需要一点空间，等自己整理好再回来。','猫'], ['会把事实、规则和责任说清楚。','企鹅'], ['先照顾受伤最明显的人，再谈别的。','小熊']] },
+  { t: '进入一个陌生环境后，你通常先做什么？', options: [['先摸清这里真正有用的门道和关键人物。','狐狸'], ['先和几个人熟起来，边聊边找感觉。','海豚'], ['先观察几轮，确认节奏和信息再发言。','猫头鹰'], ['先适应氛围，不急着证明自己。','水豚']] },
+  { t: '熟悉你的人会说，你其实挺：', options: [['护短的，关键时刻很站人。','狼'], ['有自己的边界，不是谁都能随便靠近。','猫'], ['稳的，答应的事通常会按时落地。','企鹅'], ['软乎乎的，但很会接住别人的情绪。','小熊']] },
+  { t: '原本的计划突然被打乱时，你更可能：', options: [['现场改方案，先让事情继续往前走。','狐狸'], ['把大家重新拉到一个频道里，一起改。','海豚'], ['先找出最关键的一步，按优先级重排。','猫头鹰'], ['接受变化，先把节奏放下来再说。','水豚']] },
+  { t: '在重要关系里，你最看重的是：', options: [['并肩感和忠诚感。','狼'], ['舒服、自由，不被过度打扰。','猫'], ['承诺和稳定兑现。','企鹅'], ['被理解、被安抚，也能安抚对方。','小熊']] },
+  { t: '你最拿手的一件事，通常是：', options: [['在复杂里迅速找到更省力的解法。','狐狸'], ['把本来有点尴尬的气氛重新带活。','海豚'], ['从细节里看出别人没注意到的问题。','猫头鹰'], ['把过热的场面慢慢降温。','水豚']] },
+  { t: '当一件事必须有人扛起来时，你更像：', options: [['我来带头，不然队伍容易散。','狼'], ['我会按自己的节奏做好，但别一直盯着我。','猫'], ['我来把步骤拆清楚，大家照着走会更稳。','企鹅'], ['我会边做边顾大家的状态，别让人先垮。','小熊']] },
+  { t: '社交里，什么最容易让你不舒服？', options: [['被别人当成好拿捏的人。','狐狸'], ['一整场都没有交流感，像在对空气说话。','海豚'], ['大家都在说，但没有一个人在讲重点和逻辑。','猫头鹰'], ['节奏太快，一直被逼着马上表态。','水豚']] },
+  { t: '你更希望别人怎么记住你？', options: [['聪明、会判断，关键时刻很能转弯。','狐狸'], ['热烈、好聊、让人觉得有连接感。','海豚'], ['清醒、稳重，脑子一直在线。','猫头鹰'], ['松弛、包容，靠近我不会太累。','水豚']] },
+  { t: '在关系里，什么最踩你的雷？', options: [['嘴上说一起，关键时刻却不站队。','狼'], ['越界安排我的节奏和空间。','猫'], ['明明说好了，却一直不按规则来。','企鹅'], ['有人明明难受，却硬扛着一句不说。','小熊']] },
+  { t: '如果朋友深夜来找你倾诉，你更可能：', options: [['先问关键问题，尽快帮他找到突破口。','狐狸'], ['先陪他说，把情绪接住，不让他一个人掉下去。','海豚'], ['先听完整，再帮他把事情一条条理清。','猫头鹰'], ['先让他休息、吃点东西、喘口气，别先把自己熬坏。','水豚']] },
+  { t: '在集体里，你更容易扮演的角色是：', options: [['冲在前面守住自己人。','狼'], ['保持独立存在感，不一定最合群但很鲜明。','猫'], ['把秩序维持住的人。','企鹅'], ['让人觉得可以放心靠近的人。','小熊']] },
+  { t: '下面哪句话最像你？', options: [['我认定的人，我会护到底。','狼'], ['我喜欢亲近，但更喜欢自愿靠近。','猫'], ['把事情做稳，比把话说满更重要。','企鹅'], ['温柔不是软，是我愿意接住别人。','小熊']] }
+];
+
+const results = {
+  '狐狸': {
+    tag: '机敏判断',
+    emoji: '🦊',
+    theme: ['#f97316', '#8b5cf6'],
+    intro: '狐狸通常给人的感觉是机灵、敏锐、很会看局势。它不是一股脑往前冲的动物，而是会先观察环境、判断风险，再用最灵活的方式出手。',
+    basics: { '社交模式': '先观察，再决定怎么接近', '压力反应': '迅速切换方案', '隐藏技能': '看清机会和边界', '代表氛围': '聪明、灵活、不死板' },
+    desc: '你像狐狸的地方，在于你很少只用一种固定方式面对世界。你会看人、看场、看节奏，也懂得根据不同情况切换表达方式。很多人觉得你“转得快”，其实那不是套路感，而是一种非常实用的判断力。\n\n你不一定是最外放的那个，但你往往能很快意识到哪里有机会、哪里有风险、哪里值得投入。你的人格魅力，不是高调地证明自己，而是总能在复杂里找到那条更聪明、更有效的路。'
+  },
+  '海豚': {
+    tag: '连接发光',
+    emoji: '🐬',
+    theme: ['#06b6d4', '#8b5cf6'],
+    intro: '海豚是典型的高互动动物，聪明、灵活、喜欢连接，也很会在流动的关系里找到自己的位置。它的吸引力来自活力和交流感。',
+    basics: { '社交模式': '靠互动建立熟悉感', '压力反应': '先重新连上别人', '隐藏技能': '激活气氛与关系', '代表氛围': '热烈、轻快、有参与感' },
+    desc: '你像海豚的地方，在于你和世界建立联系的方式很自然。你通常不是冷场型人物，很多时候只要你愿意开口，气氛就会慢慢活起来。你会从交流里获得能量，也很擅长让别人觉得“跟你在一起是有回应的”。\n\n你未必时时刻刻都热闹，但你身上确实有一种把关系点亮的能力。你对人的感受很敏锐，知道什么时候该陪、什么时候该接话、什么时候该让一个场面重新流动起来。'
+  },
+  '猫头鹰': {
+    tag: '冷静洞察',
+    emoji: '🦉',
+    theme: ['#64748b', '#7c3aed'],
+    intro: '猫头鹰象征清醒、观察和洞察。它不靠热闹赢得存在感，而是靠安静地看、认真地想，再在关键时刻给出足够准确的判断。',
+    basics: { '社交模式': '先观察，再表达', '压力反应': '理清线索和优先级', '隐藏技能': '从细节发现问题', '代表氛围': '沉稳、清醒、脑子在线' },
+    desc: '你像猫头鹰的地方，在于你不太会被表面的热闹轻易带走。很多时候，你更习惯先看清楚，再开口；先想明白，再行动。你可能不是最先冲出去的人，但你往往是最早发现关键细节的人。\n\n你的人格力量不在于声量，而在于判断。别人可能以为你安静，其实你一直在处理信息、校准逻辑、确认方向。你给人的安全感，来自那种“这人真的有在看、有在想”的稳定感。'
+  },
+  '水豚': {
+    tag: '松弛治愈',
+    emoji: '🦫',
+    theme: ['#22c55e', '#eab308'],
+    intro: '水豚这几年很受欢迎，不只是因为看起来可爱，而是它身上有一种极强的松弛感。它不抢、不炸、不硬顶，但有能力让整个环境慢下来。',
+    basics: { '社交模式': '不抢节奏，先让人舒服', '压力反应': '先降温，再处理', '隐藏技能': '稀释紧张感', '代表氛围': '松弛、包容、让人没压力' },
+    desc: '你像水豚的地方，在于你不是靠强势赢位置的人。很多时候，你的厉害恰恰来自“没那么用力”——你不急着抢话，也不急着证明自己，但你会让场面慢慢变稳、让周围的人没那么绷。\n\n你可能常被人说好相处、没攻击性，可这不代表你没有力量。你只是更懂得用低耗能的方式维持关系和生活节奏。很多人靠近你，会有一种终于可以喘口气的感觉。'
+  },
+  '狼': {
+    tag: '护住自己人',
+    emoji: '🐺',
+    theme: ['#334155', '#8b5cf6'],
+    intro: '狼往往代表忠诚、群体感和行动力。它不是只顾自己往前跑，而是会分辨谁是同伴、什么时候该顶上、什么时候该守住队伍。',
+    basics: { '社交模式': '认人也认阵营', '压力反应': '先顶住再说', '隐藏技能': '把分散的人凝成一队', '代表氛围': '可靠、护短、有担当' },
+    desc: '你像狼的地方，在于你对“自己人”这件事很认真。你未必对所有人都一样热情，但只要认定了关系，你通常会很愿意出力，也不喜欢在关键时刻掉链子。\n\n你的人格核心里有很强的担当感。遇到事情时，你往往不是只顾自己怎么安全，而是会本能地想到：这件事谁来扛、谁需要我站一下、怎么才能不让队伍散掉。你的力量感，来自忠诚和执行。'
+  },
+  '猫': {
+    tag: '边界感强',
+    emoji: '🐱',
+    theme: ['#ec4899', '#8b5cf6'],
+    intro: '猫身上最鲜明的，不只是可爱，而是边界感。它可以亲近、可以柔软、可以贴近人，但前提是节奏对、距离对、关系对。',
+    basics: { '社交模式': '先确认舒适度', '压力反应': '拉开距离，恢复节奏', '隐藏技能': '在独立和亲近之间切换', '代表氛围': '鲜明、自持、有分寸' },
+    desc: '你像猫的地方，在于你对自己的空间感非常敏感。你不是不需要关系，而是更需要“舒服的关系”。你可以很亲近，也可以很有温度，但你不喜欢被安排、被追着要反应、被迫一直保持在线。\n\n你的人格吸引力，恰恰来自这种分寸感。别人会觉得你有自己的节奏和审美，不是谁都能轻易闯进去；但一旦你愿意靠近，那个靠近又是真实的、带温度的，不是随便给出去的。'
+  },
+  '企鹅': {
+    tag: '秩序稳定',
+    emoji: '🐧',
+    theme: ['#0f172a', '#38bdf8'],
+    intro: '企鹅给人的感觉通常是稳、整齐、可靠。它不是靠花哨出圈的动物，而是靠秩序感、责任感和持续输出让人信任。',
+    basics: { '社交模式': '先把规则和责任放稳', '压力反应': '拆步骤、排顺序', '隐藏技能': '让事情有章法地推进', '代表氛围': '稳妥、可信、可持续' },
+    desc: '你像企鹅的地方，在于你很重视秩序和兑现。很多人擅长开头，但你更擅长让事情真正落地：把流程捋顺、把责任分清、把答应的内容一个个做出来。\n\n你也许不是最会制造声量的人，但你是很容易让人放心的人。你会在混乱里建立框架，在不确定里提供稳定感。别人跟你合作，常常会觉得：这件事终于有人能稳稳接住了。'
+  },
+  '小熊': {
+    tag: '温柔承接',
+    emoji: '🐻',
+    theme: ['#d97706', '#f59e0b'],
+    intro: '小熊让人联想到温暖、柔和、能靠近，但它不是没有力量，而是更擅长用柔软的方式承接人和情绪，让关系变得安全。',
+    basics: { '社交模式': '先让对方感到安心', '压力反应': '安抚人，再处理事', '隐藏技能': '把别人接住', '代表氛围': '温暖、柔和、很有陪伴感' },
+    desc: '你像小熊的地方，在于你很会接住别人。你不一定是最会讲大道理的人，但你常常知道什么时候该安静陪着，什么时候该递一句温柔的话，什么时候该先让一个人别再硬撑。\n\n你的力量不在锋利，而在承接。很多人会在你这里感到放松，因为你不会立刻评判，也不会把对方推得更紧。你的人格魅力，是那种让人愿意卸下防备、愿意靠近、愿意相信自己可以被温柔对待的能力。'
+  }
+};
+
+const screens = {
+  intro: document.getElementById('intro'),
+  test: document.getElementById('test'),
+  loading: document.getElementById('loading'),
+  result: document.getElementById('result')
+};
+const app = { answers: {}, index: 0 };
+const qList = document.getElementById('questionList');
+const pBar = document.getElementById('progressBar');
+const pText = document.getElementById('progressText');
+
+function show(name) {
+  Object.entries(screens).forEach(([k, v]) => v.classList.toggle('active', k === name));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderQuestions() {
+  qList.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const el = document.createElement('article');
+    el.className = idx === app.index ? 'question-card active' : 'question-card';
+    el.innerHTML = `<div class="qmeta"><span class="badge">第 ${idx + 1} 题</span><span>单题推进模式 · 共 ${questions.length} 题</span></div><div class="qtitle">${q.t}</div><div class="options">${q.options.map((o, j) => `<label class="option"><input type="radio" name="q${idx}" value="${j}" ${String(app.answers[idx]) === String(j) ? 'checked' : ''} /><div class="option-code">${String.fromCharCode(65 + j)}</div><div class="option-text">${o[0]}</div></label>`).join('')}</div>`;
+    qList.appendChild(el);
+  });
+  qList.querySelectorAll('input').forEach(input => input.addEventListener('click', e => {
+    app.answers[Number(e.target.name.slice(1))] = Number(e.target.value);
+    updateProgress();
+    if (app.index < questions.length - 1) setTimeout(() => { app.index += 1; renderQuestions(); }, 220);
+  }));
+  updateProgress();
+}
+
+function updateProgress() {
+  const done = Object.keys(app.answers).length;
+  const total = questions.length;
+  pBar.style.width = `${done / total * 100}%`;
+  pText.textContent = `${done} / ${total}`;
+  document.getElementById('prevBtn').hidden = app.index === 0;
+  const answered = app.answers[app.index] !== undefined;
+  const next = document.getElementById('nextBtn');
+  const submit = document.getElementById('submitBtn');
+  next.disabled = !answered;
+  if (app.index === total - 1) {
+    next.style.display = 'none'; submit.style.display = 'inline-flex'; submit.disabled = done < total;
+  } else {
+    next.style.display = 'inline-flex'; submit.style.display = 'none';
+  }
+}
+
+function countScores() {
+  const scores = {};
+  Object.keys(results).forEach(k => scores[k] = 0);
+  questions.forEach((q, idx) => {
+    const a = app.answers[idx];
+    if (a !== undefined) scores[q.options[a][1]] += 1;
+  });
+  return scores;
+}
+
+function getWinner() {
+  const scores = countScores();
+  const ranking = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  return ranking[0][0];
+}
+
+function renderBasics(basics) {
+  const grid = document.getElementById('basicGrid');
+  grid.innerHTML = Object.entries(basics).map(([label, value]) => `<div class="basic-item"><div class="basic-label">${label}</div><div class="basic-value">${value}</div></div>`).join('');
+}
+
+function buildAnimalSvg(name, tag, colors, emoji) {
+  const [c1, c2] = colors;
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${c1}" /><stop offset="100%" stop-color="${c2}" /></linearGradient></defs>
+    <rect width="960" height="720" rx="42" fill="url(#g)" />
+    <circle cx="140" cy="120" r="170" fill="rgba(255,255,255,.18)" />
+    <circle cx="790" cy="120" r="140" fill="rgba(255,255,255,.12)" />
+    <circle cx="740" cy="520" r="180" fill="rgba(255,255,255,.08)" />
+    <circle cx="255" cy="380" r="130" fill="rgba(255,255,255,.20)" />
+    <circle cx="255" cy="380" r="104" fill="rgba(255,255,255,.95)" />
+    <text x="255" y="414" text-anchor="middle" font-size="92" font-weight="700" font-family="Apple Color Emoji, Segoe UI Emoji, PingFang SC, Microsoft YaHei, sans-serif">${emoji}</text>
+    <text x="408" y="320" font-size="90" font-weight="800" font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="white">${name}</text>
+    <text x="410" y="382" font-size="34" font-weight="700" font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="rgba(255,255,255,.94)">${tag}</text>
+    <rect x="408" y="436" width="294" height="54" rx="27" fill="rgba(255,255,255,.18)" />
+    <text x="442" y="471" font-size="25" font-weight="700" font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="rgba(255,255,255,.96)">前端动物图卡素材</text>
+    <text x="60" y="85" font-size="24" font-weight="700" font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="rgba(255,255,255,.96)">《你的动物人格测试》</text>
+    <text x="60" y="654" font-size="24" font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="rgba(255,255,255,.9)">结果页联调版 · 可替换为正式动物插画</text>
+  </svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
+function renderResult() {
+  const winner = getWinner();
+  const result = results[winner];
+  document.getElementById('resultIntro').textContent = result.intro;
+  document.getElementById('resultDesc').textContent = result.desc;
+  document.getElementById('resultImage').src = buildAnimalSvg(winner, result.tag, result.theme, result.emoji);
+  document.getElementById('resultImage').alt = winner + ' 图卡素材';
+  renderBasics(result.basics);
+  show('result');
+}
+
+function startTest() {
+  app.answers = {}; app.index = 0; renderQuestions(); show('test');
+}
+
+document.getElementById('startBtn').addEventListener('click', startTest);
+document.getElementById('backHomeBtn').addEventListener('click', () => {
+  if (!Object.keys(app.answers).length || confirm('当前答题进度会丢失，确认返回主页吗？')) location.href='../../index.html';
+});
+document.getElementById('prevBtn').addEventListener('click', () => { if (app.index > 0) { app.index -= 1; renderQuestions(); } });
+document.getElementById('nextBtn').addEventListener('click', () => { if (app.index < questions.length - 1) { app.index += 1; renderQuestions(); } });
+document.getElementById('submitBtn').addEventListener('click', () => {
+  show('loading');
+  const logs = ['整理你的社交和行动偏好中…','比对最接近的动物特征中…','装载图卡与结果解释中…'];
+  const text = document.getElementById('loadingText');
+  let i = 0;
+  const timer = setInterval(() => {
+    if (i < logs.length) text.textContent = logs[i++];
+    else { clearInterval(timer); renderResult(); }
+  }, 560);
+});
+document.getElementById('restartBtn').addEventListener('click', startTest);
+</script>
+</body>
+</html>
