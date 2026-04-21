@@ -74,5 +74,7 @@ function showResult(){const typeName=calcResult();const data=results[typeName];d
 function shareResult(){const type=document.getElementById('type').innerText.replace(/\n/g,'');const text=`我在 DogTI 测出来是「${type}」，你也来测测？`;if(navigator.share){navigator.share({title:'DogTI 测试结果',text,url:window.location.href})}else{navigator.clipboard?.writeText(text+' '+window.location.href);alert('结果文案已复制，去发给朋友吧。')}}
 function retryQuiz(){startQuiz()}
 </script>
+<script src="./assets.js"></script>
+<script src="./pixel-patch.js"></script>
 </body>
 </html>
