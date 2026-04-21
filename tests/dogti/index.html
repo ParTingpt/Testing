@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <title>DogTI</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            :root {
+                --black: #111111;
+                --gray-1: #f5f5f5;
+                --gray-2: #e8e8e8;
+                --gray-3: #aaaaaa;
+                --white: #ffffff;
+                --font: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+            }
+
+            body {
+                background: var(--white);
+                color: var(--black);
+                font-family: var(--font);
+                min-height: 100vh;
+                max-width: 390px;
+                margin: 0 auto;
+                overflow-x: hidden;
+            }
+
+            /* ─── 封面页 ─── */
+            .page {
+                display: none;
+            }
+
+            .page.active {
+                display: block;
+            }
+
+            #page-home {
+                min-height: 100vh;
+                background: #fff;
+                overflow: hidden;
+                position: relative;
+                padding-top: 20px;
+            }
+
+            /* 像素大标题 */
+            .home-pixel-title {
+                /* font-family: 'Press Start 2P', monospace; */
+                /* font-size: 52px; */
+                /* color: #111; */
+                text-align: center;
+                padding: 24px 0 0;
+                /* letter-spacing: 4px; */
+                line-height: 1;
+                position: relative;
+                z-index: 2;
+                /* -webkit-text-stroke: 3px #111; */
+                /* paint-order: stroke fill; */
+            }
+
+            /* 动物滚动区域 */
+            .animals-stage {
+                width: 100%;
+                overflow: hidden;
+                padding: 12px 0 0;
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .animals-row {
+                display: flex;
+                gap: 0;
+                width: max-content;
+            }
+
+            .animals-row.row-1 {
+                animation: scroll-left 18s linear infinite;
+            }
+
+            .animals-row.row-2 {
+                animation: scroll-right 22s linear infinite;
+            }
+
+            .animals-row.row-3 {
+                animation: scroll-left 16s linear infinite;
+            }
+
+            @keyframes scroll-left {
+                0% {
+                    transform: translateX(0);
+                }
+
+                100% {
+                    transform: translateX(-50%);
+                }
+            }
+
+            @keyframes scroll-right {
+                0% {
+                    transform: translateX(-50%);
+                }
+
+                100% {
+                    transform: translateX(0);
+                }
+            }
+
+            .animal-cell {
+                width: 96px;
+                height: 96px;
+                display: grid;
+                place-items: center;
+                flex: 0 0 auto;
+            }
+
+            /* 底部 */
+            .home-bottom {
+                padding: 6px 20px 22px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                position: relative;
+                z-index: 2;
+                background: #fff;
+            }
+
+            .btn-start {
+                background: #111;
+                color: #fff;
+                border: none;
+                border-radius: 999px;
+                height: 54px;
+                padding: 0 24px;
+                min-width: 170px;
+                font-size: 18px;
+                font-weight: 700;
+                letter-spacing: .5px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                box-shadow: 0 6px 0 #00000010;
+            }
+
+            .btn-start:active {
+                transform: scale(.98);
+            }
+
+            .btn-start-icon {
+                width: 12px;
+                height: 12px;
+                background: #fff;
+                border-radius: 999px;
+                display: inline-block;
+            }
+
+            /* ─── 题目页 ─── */
+            #page-quiz {
+                min-height: 100vh;
+                background: #fff;
+                display: none;
+                padding: 18px 18px 24px;
+            }
+
+            #page-quiz.active {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .quiz-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 16px;
+            }
+
+            .btn-back {
+                width: 36px;
+                height: 36px;
+                border: none;
+                background: #f2f2f2;
+                border-radius: 999px;
+                font-size: 18px;
+                line-height: 1;
+            }
+
+            .quiz-counter {
+                font-size: 14px;
+                color: #666;
+                font-weight: 600;
+            }
+
+            .progress-wrap {
+                margin-bottom: 24px;
+            }
+
+            .progress-track {
+                width: 100%;
+                height: 8px;
+                background: #efefef;
+                border-radius: 999px;
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                height: 100%;
+                width: 10%;
+                background: #111;
+                border-radius: 999px;
+                transition: width .25s ease;
+            }
+
+            .quiz-body {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .quiz-dog-wrap {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 18px;
+            }
+
+            .quiz-dog-icon {
+                width: 48px;
+                height: 48px;
+                display: grid;
+                place-items: center;
+                flex: 0 0 auto;
+            }
+
+            .quiz-dog-bubble {
+                background: #f6f6f6;
+                color: #666;
+                border-radius: 14px;
+                padding: 10px 12px;
+                font-size: 13px;
+                line-height: 1.3;
+            }
+
+            .question-text {
+                font-size: 28px;
+                line-height: 1.32;
+                font-weight: 800;
+                letter-spacing: -.6px;
+                margin: 10px 0 24px;
+            }
+
+            .options {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .opt {
+                width: 100%;
+                border: 2px solid #eee;
+                background: #fff;
+                border-radius: 18px;
+                padding: 16px 16px 16px 14px;
+                text-align: left;
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                font-size: 16px;
+                line-height: 1.5;
+                transition: .2s ease;
+            }
+
+            .opt-key {
+                width: 28px;
+                height: 28px;
+                border-radius: 999px;
+                background: #f3f3f3;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 800;
+                flex: 0 0 auto;
+            }
+
+            .opt.selected {
+                border-color: #111;
+                background: #fafafa;
+            }
+
+            .btn-next {
+                width: 100%;
+                height: 56px;
+                border: none;
+                border-radius: 999px;
+                background: #ddd;
+                color: #fff;
+                font-size: 18px;
+                font-weight: 800;
+                margin-top: 18px;
+                transition: .2s ease;
+            }
+
+            .btn-next.enabled {
+                background: #111;
+            }
+
+            /* ─── 结果页 ─── */
+            #page-result {
+                min-height: 100vh;
+                background: #fff;
+                display: none;
+                padding: 18px 18px 26px;
+            }
+
+            #page-result.active {
+                display: block;
+            }
+
+            .result-top {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 20px;
+            }
+
+            .result-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                border-radius: 999px;
+                background: #f6f6f6;
+                font-size: 13px;
+                color: #555;
+                font-weight: 700;
+            }
+
+            .result-main {
+                text-align: center;
+            }
+
+            .result-dog-frame {
+                width: 150px;
+                height: 150px;
+                margin: 0 auto 12px;
+                display: grid;
+                place-items: center;
+            }
+
+            .result-type {
+                font-size: 34px;
+                font-weight: 900;
+                line-height: 1.12;
+                letter-spacing: -1px;
+                margin-bottom: 8px;
+            }
+
+            .result-subname {
+                font-size: 16px;
+                color: #666;
+                margin-bottom: 16px;
+                font-weight: 700;
+            }
+
+            .result-quote {
+                background: #fafafa;
+                border-radius: 18px;
+                padding: 16px;
+                font-size: 16px;
+                line-height: 1.6;
+                color: #333;
+                margin-bottom: 18px;
+            }
+
+            .trait-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            .trait {
+                padding: 8px 12px;
+                background: #f2f2f2;
+                border-radius: 999px;
+                font-size: 13px;
+                font-weight: 700;
+                color: #444;
+            }
+
+            .result-desc {
+                font-size: 16px;
+                line-height: 1.8;
+                color: #333;
+                text-align: left;
+                margin-bottom: 24px;
+            }
+
+            .result-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn-action {
+                width: 100%;
+                height: 54px;
+                border-radius: 999px;
+                border: none;
+                font-size: 17px;
+                font-weight: 800;
+            }
+
+            .btn-share {
+                background: #111;
+                color: #fff;
+            }
+
+            .btn-retry {
+                background: #f2f2f2;
+                color: #111;
+            }
+
+            @media (max-width: 390px) {
+                .question-text {
+                    font-size: 26px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="page active" id="page-home">
+            <div class="home-pixel-title">
+                <img data-asset="DOGTI标题.png" style="max-width:75%;height:auto;display:block;margin:0 auto;">
+            </div>
+            <div class="animals-stage">
+                <div class="animals-row row-1">
+                    <div class="animal-cell"><img data-asset="杜宾.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="边牧.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="金毛.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="比格.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="阿拉斯加.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="比熊.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="柴犬.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="德牧.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="杜宾.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="边牧.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="金毛.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="比格.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="阿拉斯加.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="比熊.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="柴犬.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="德牧.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                </div>
+                <div class="animals-row row-2">
+                    <div class="animal-cell"><img data-asset="哈士奇.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="拉布拉多.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="泰迪.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="萨摩耶.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="马尔济斯.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="柯基.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="松狮.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="腊肠.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="哈士奇.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="拉布拉多.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="泰迪.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="萨摩耶.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="马尔济斯.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="柯基.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="松狮.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="腊肠.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                </div>
+                <div class="animals-row row-3">
+                    <div class="animal-cell"><img data-asset="杜宾.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="边牧.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="金毛.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="比格.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="阿拉斯加.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="比熊.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="柴犬.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="德牧.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="哈士奇.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="拉布拉多.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="泰迪.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="萨摩耶.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="马尔济斯.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="柯基.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="松狮.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="animal-cell"><img data-asset="腊肠.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
+                </div>
+            </div>
+            <div class="home-bottom">
+                <img data-asset="文案.png" style="max-width:90%;height:auto;display:block;margin:0 auto 28px;">
+                <button class="btn-start" onclick="startQuiz()"><span class="btn-start-icon"></span>开始测试</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-quiz">
+            <div class="quiz-header">
+                <button class="btn-back" onclick="goBack()">←</button>
+                <span class="quiz-counter" id="quiz-counter">1 / 10</span>
+                <div style="width:36px"></div>
+            </div>
+            <div class="progress-wrap">
+                <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:10%"></div></div>
+            </div>
+            <div class="quiz-body">
+                <div class="quiz-dog-wrap">
+                    <div class="quiz-dog-icon" id="quiz-dog-icon"><img data-asset="柴犬.png" style="width:40px;height:40px;image-rendering:pixelated;object-fit:contain"></div>
+                    <div class="quiz-dog-bubble" id="quiz-dog-bubble">认真想想，别骗我</div>
+                </div>
+                <div class="question-text" id="question-text"></div>
+                <div class="options" id="options-wrap"></div>
+            </div>
+            <button class="btn-next" id="btn-next" onclick="nextQuestion()">继续 →</button>
+        </div>
+
+        <div class="page" id="page-result">
+            <div class="result-top">
+                <div class="result-chip">DogTI 结果</div>
+                <div class="result-chip" id="result-date"></div>
+            </div>
+            <div class="result-main">
+                <div class="result-dog-frame" id="result-dog-frame"></div>
+                <div class="result-type" id="result-type"></div>
+                <div class="result-subname" id="result-subname"></div>
+                <div class="result-quote"><span id="result-quote-text"></span></div>
+                <div class="trait-list" id="trait-list"></div>
+                <div class="result-desc" id="result-desc"></div>
+            </div>
+            <div class="result-actions">
+                <button class="btn-action btn-share" onclick="shareResult()">分享给朋友</button>
+                <button class="btn-action btn-retry" onclick="retryQuiz()">再测一次</button>
+            </div>
+        </div>
+
+        <script>
+            const ASSETS = {"DOGTI标题.png":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqUAAABmCAYAAABlE63aAAAC/klEQVR4nO3b0U3DMBRA0UIkkd4wA3R0M0O0BGxhBujoZgYJqOeATPSwdQ8B2ct3JIv74fX2ecj+9QAAAHh+2WwGQF4qvgIAACjlkAIAAEI5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAACQvQAnTQ6BxN5oLwAAAABJRU5ErkJggg==","文案.png":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAb0AAABlCAYAAAAvyNaGAAAFlElEQVR4nO3dX0iV9R/H8fefc3c6mW62bZ2CxlENQ2xMLiQSE8ZUVlb3U5FGFHdJbLhE5aKpQ93YI1JQoK7YQhDRZ+4CFE0l0TQwCAlMpZifjB4/v+49e/M/7+zPfZx3x+v1+v2e/fK7nO95znPeeccw5QAAAAAADg+R7t1xkAAAAA8LRQ6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABA+QdqwU1B0/fhXQAAAABJRU5ErkJggg==","杜宾.png":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhAAAAGQCAYAAABjv9lWAAA5E0lEQVR4nO3dS3LcthGG4Y0lT7Y5HyCyyRgtERlZpT+kdff+V4TzKWR+sdgB1LCuD5pTS67URAbgC3Oa5n1+eR6AN8Z6+f4BAGA84AIAgBFwAQDACHgAAEAIuAAAYAQcAAAwAi4AABgBFwAADICLAAA+wPmW7wD4zX1+8r8b0wzW...TRUNCATED
