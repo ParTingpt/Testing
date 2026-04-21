@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>《你的情商段位测试》</title>
+  <style>
+    :root {
+      --text: #231a33;
+      --muted: #6f6782;
+      --line: #e6def3;
+      --soft: #f2ecfb;
+      --accent: #8b5cf6;
+      --shadow: 0 18px 48px rgba(139,92,246,.10);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(circle at top left, rgba(139,92,246,.12), transparent 32%), linear-gradient(180deg,#fcfbff 0%,#f8f6fc 44%,#f4effb 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .shell { max-width: 960px; margin: 0 auto; padding: 18px 14px 44px; }
+    .card { background: rgba(255,255,255,.92); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .back { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px; background: #fff; border: 1px solid var(--line); color: var(--accent); font-weight: 700; text-decoration: none; margin-bottom: 14px; }
+    .hero, .test-wrap, .loading-wrap, .result-wrap { padding: 20px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); color: var(--accent); font-size: 12px; font-weight: 700; margin-bottom: 14px; }
+    h1 { margin: 0; font-size: clamp(30px, 7vw, 46px); line-height: 1.08; letter-spacing: -.03em; }
+    .sub { margin-top: 14px; color: var(--muted); line-height: 1.9; font-size: 15px; }
+    .hero-tips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .pill { padding: 8px 12px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+    .actions { display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 18px; }
+    .hint { font-size: 13px; color: var(--muted); line-height: 1.8; }
+    .btn { border: 0; cursor: pointer; border-radius: 14px; padding: 13px 18px; font-weight: 800; font: inherit; transition: transform .16s ease, opacity .16s ease; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .btn-primary { background: linear-gradient(100deg,#7c3aed,#8b5cf6 40%,#ec4899 100%); color: #fff; box-shadow: 0 12px 28px rgba(139,92,246,.18); }
+    .btn-secondary { background: #fff; color: var(--accent); border: 1px solid var(--line); }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .dock { position: sticky; top: 10px; z-index: 20; margin-top: 16px; padding: 16px 18px; display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; background: rgba(252,251,255,.92); backdrop-filter: blur(10px); }
+    .progress { flex: 1; min-width: 220px; height: 10px; background: #efe8fb; border-radius: 999px; overflow: hidden; }
+    .progress > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg,#8b5cf6,#ec4899); transition: width .2s ease; }
+    .progress-text { font-size: 13px; color: var(--muted); white-space: nowrap; }
+    .question-card { display: none; border: 1px solid var(--line); border-radius: 20px; padding: 18px; background: linear-gradient(180deg,#fff,#fbf8ff); }
+    .question-card.active { display: block; }
+    .qmeta { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; color: var(--muted); font-size: 12px; }
+    .badge { display: inline-flex; align-items: center; padding: 7px 12px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); color: var(--accent); font-weight: 700; }
+    .qtitle { font-size: 20px; line-height: 1.75; }
+    .options { display: grid; gap: 10px; margin-top: 18px; }
+    .option { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 16px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+    .option:hover { background: #fdfbff; border-color: #cfbee9; }
+    .option input { margin-top: 4px; accent-color: var(--accent); }
+    .option-code { min-width: 22px; font-weight: 800; color: var(--accent); }
+    .option-text { flex: 1; line-height: 1.85; }
+    .spinner { display: inline-block; width: 44px; height: 44px; border: 4px solid #ece4f8; border-radius: 50%; border-top-color: var(--accent); animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-wrap { text-align: center; padding: 72px 20px; }
+    .loading-wrap h2 { margin: 22px 0 0; font-size: 22px; }
+    .loading-wrap p { margin-top: 10px; color: var(--muted); font-size: 14px; }
+    .result-wrap { display: grid; gap: 16px; }
+    .box { border: 1px solid var(--line); border-radius: 18px; padding: 18px; background: linear-gradient(180deg,#fff,#fbf8ff); }
+    .photo-card { min-height: 260px; border-radius: 20px; border: 1px solid var(--line); background: linear-gradient(135deg,#f7f1ff 0%,#fff5fb 100%); display: grid; place-items: center; }
+    .avatar { width: 120px; height: 120px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(180deg,#fff,#f8f4ff); border: 1px solid var(--line); font-size: 30px; font-weight: 800; color: #7c3aed; margin: 0 auto 14px; }
+    .photo-name { font-size: clamp(30px,6vw,40px); font-weight: 800; letter-spacing: -.03em; text-align: center; }
+    .photo-note { font-size: 13px; color: var(--muted); text-align: center; margin-top: 10px; line-height: 1.8; }
+    .box h3 { margin: 0 0 10px; font-size: 18px; }
+    .box p { margin: 0; color: var(--muted); line-height: 1.95; font-size: 15px; white-space: pre-wrap; }
+    .basic-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    .basic-item { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; background: #fff; }
+    .basic-label { font-size: 12px; color: var(--accent); font-weight: 800; margin-bottom: 6px; }
+    .basic-value { color: var(--muted); line-height: 1.8; font-size: 14px; }
+    .note { font-size: 13px; color: var(--muted); line-height: 1.85; }
+    .result-actions { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    @media(max-width: 720px) {
+      .hero, .test-wrap, .loading-wrap, .result-wrap { padding: 16px; }
+      .qtitle { font-size: 18px; }
+      .basic-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <a class="back" href="../../index.html">← 返回测试主页</a>
+
+    <section id="intro" class="screen active">
+      <div class="hero card">
+        <div class="eyebrow">娱乐向 · 情绪与社交风格测试</div>
+        <h1>《你的情商段位测试》</h1>
+        <p class="sub">这套测试不是看你会不会说漂亮话，而是看你在真实情境里，能不能察觉情绪、稳住反应、理解别人、把关系处理得更顺。整体结构参考情绪智力常见模型，并通俗化为四个维度：情绪觉察、情绪调节、共情理解、关系表达。做完之后，你会得到一个更适合传播分享的情商段位结果页。</p>
+        <div class="hero-tips">
+          <span class="pill">16题正式版</span>
+          <span class="pill">四维结构画像</span>
+          <span class="pill">单题推进</span>
+          <span class="pill">结果页含理论来源</span>
+        </div>
+        <div class="actions">
+          <div class="hint">请选择现实里更像你的反应，不要只选“最成熟”或“最理想”的版本。</div>
+          <button id="startBtn" class="btn btn-primary" type="button">开始测试</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="test" class="screen">
+      <div class="dock card">
+        <div class="progress"><span id="progressBar"></span></div>
+        <div class="progress-text" id="progressText">0 / 16</div>
+      </div>
+      <div class="test-wrap card">
+        <div id="questionList"></div>
+        <div class="actions">
+          <button id="backHomeBtn" class="btn btn-secondary" type="button">返回主页</button>
+          <button id="prevBtn" class="btn btn-secondary" type="button" hidden>上一题</button>
+          <div style="flex:1"></div>
+          <button id="nextBtn" class="btn btn-secondary" type="button" disabled>下一题</button>
+          <button id="submitBtn" class="btn btn-primary" type="button" style="display:none" disabled>查看结果</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="loading" class="screen">
+      <div class="loading-wrap card">
+        <div class="spinner"></div>
+        <h2>正在生成你的情商段位画像…</h2>
+        <p id="loadingText">读取你的情绪线索中…</p>
+      </div>
+    </section>
+
+    <section id="result" class="screen">
+      <div class="result-wrap card">
+        <div class="box">
+          <div class="photo-card">
+            <div>
+              <div class="avatar" id="avatarText">EQ</div>
+              <div class="photo-name" id="resultName">气氛稳定器型</div>
+              <div class="photo-note" id="resultTagline">你既能感受到气氛变化，也能把话说到位，把关系稳下来。</div>
+            </div>
+          </div>
+        </div>
+        <div class="box">
+          <h3>结果解释</h3>
+          <p id="resultDesc"></p>
+        </div>
+        <div class="box">
+          <h3>你的四维结构画像</h3>
+          <div class="basic-grid" id="basicGrid"></div>
+        </div>
+        <div class="box">
+          <h3>理论来源（通俗版）</h3>
+          <p id="theoryText"></p>
+        </div>
+        <div class="box">
+          <h3>提升建议</h3>
+          <p id="resultAdvice"></p>
+        </div>
+        <div class="note">说明：本测试用于娱乐性自我观察，不替代专业心理评估。题目参考情绪智力常见理论结构进行情境化改写，更适合看你的日常倾向，而不是给你下“高低好坏”的定论。</div>
+        <div class="result-actions">
+          <button id="restartBtn" class="btn btn-secondary" type="button">重新测试</button>
+          <a class="btn btn-primary" href="../../index.html" style="text-decoration:none">返回测试主页</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const theoryText = '本测试把“情商”拆成四个更容易感知的部分：\n1. 情绪觉察：你能不能及时发现自己和他人的情绪变化。\n2. 情绪调节：情绪上来时，你能不能先稳住反应，再选择怎么表达。\n3. 共情理解：你能不能读懂别人话语背后的情绪和处境。\n4. 关系表达：你能不能在不委屈自己的前提下，把关系处理得更顺。\n\n结构上更接近情绪智力理论里常见的自我觉察、自我调节、共情与社会技能思路，同时为了传播和分享体验，题目做了日常场景化处理。';
+
+    const questions = [
+      { t: '你原本安排得很顺的一天，突然被临时通知打乱了。你通常会怎么反应？', dim: 'awareness', options: [
+        ['先烦躁起来，事后才发现自己已经被情绪带着走了。', 1],
+        ['能感觉到自己不爽，但一时说不清具体是哪里不舒服。', 2],
+        ['会意识到自己有情绪，也大概知道是计划被打乱让我不舒服。', 3],
+        ['能很快分清自己是在失望、着急还是被冒犯，然后再决定怎么处理。', 4]
+      ]},
+      { t: '你发现一个朋友最近说话变少、语气也淡了。你更可能怎么理解？', dim: 'awareness', options: [
+        ['先默认对方就是对我有意见。', 1],
+        ['觉得哪里不太对，但通常不会继续想。', 2],
+        ['会先观察一下，是他最近状态差，还是我哪里让他不舒服了。', 3],
+        ['会结合近期的情境去判断，并区分“对方情绪问题”和“关系变化”是不是一回事。', 4]
+      ]},
+      { t: '你今天一直提不起劲，还容易烦。你一般多久能意识到自己的状态不对？', dim: 'awareness', options: [
+        ['通常要等到和别人说重话了，我才反应过来。', 1],
+        ['要到很晚才会发现，原来自己整天都不对劲。', 2],
+        ['中途通常能察觉，只是未必马上调整。', 3],
+        ['比较早就能感受到自己的情绪走向，知道今天需要留一点余地。', 4]
+      ]},
+      { t: '一个机会最后给了别人而不是你。你更像哪种内心反应？', dim: 'awareness', options: [
+        ['第一反应就是不服，而且会直接陷进比较情绪里。', 1],
+        ['会不开心，但更多只是闷着，不太分得清自己到底在难受什么。', 2],
+        ['会意识到自己可能是失落、嫉妒、委屈混在一起。', 3],
+        ['能分清“我很失落”和“我开始自我否定”不是同一件事。', 4]
+      ]},
+      { t: '被别人当面指出问题时，你通常会怎么处理当下的情绪？', dim: 'regulation', options: [
+        ['先顶回去，事后再想是不是自己太冲了。', 1],
+        ['表面不说，但心里会马上翻涌，影响很久。', 2],
+        ['会先让自己别急着反击，等情绪缓一下再判断。', 3],
+        ['能先接住情绪，再把“面子感受”和“问题本身”拆开来看。', 4]
+      ]},
+      { t: '有人在公开场合阴阳你一句，你更可能怎么做？', dim: 'regulation', options: [
+        ['情绪一上来就想立刻反击。', 1],
+        ['表面忍住了，但会一直在脑子里反复回放。', 2],
+        ['先看场合值不值得处理，尽量不被一句话带偏整场状态。', 3],
+        ['能稳住情绪，判断是直接回应、暂时放下，还是事后单独处理更合适。', 4]
+      ]},
+      { t: '你说错了一句话，明显让气氛有点尴尬。你通常会？', dim: 'regulation', options: [
+        ['越尴尬越想硬扛过去，当没发生。', 1],
+        ['心里很慌，但不知道怎么补救。', 2],
+        ['会尽快用一句更合适的话把气氛拉回来。', 3],
+        ['既能承认刚刚说得不妥，也能自然修正，不让尴尬继续扩散。', 4]
+      ]},
+      { t: '和重要的人起了争执后，你更常见的状态是？', dim: 'regulation', options: [
+        ['情绪上来就很难停，越想越激动。', 1],
+        ['会先沉默，但其实一直在内耗。', 2],
+        ['会给自己一点缓冲时间，再找机会沟通。', 3],
+        ['知道什么时候该暂停，什么时候再谈，能避免把情绪扩大成关系伤害。', 4]
+      ]},
+      { t: '朋友嘴上说“没事”，但神情明显不对。你更可能怎么做？', dim: 'empathy', options: [
+        ['既然他说没事，那我就默认真没事。', 1],
+        ['会觉得他情绪不好，但不太知道该怎么理解。', 2],
+        ['会意识到他可能只是暂时不想展开说。', 3],
+        ['能大致判断对方此刻更需要空间、陪伴，还是一句更具体的关心。', 4]
+      ]},
+      { t: '有人来找你倾诉时，你最常见的反应是？', dim: 'empathy', options: [
+        ['马上给建议，想赶紧把问题解决掉。', 1],
+        ['会听，但常常不知道他真正想要什么。', 2],
+        ['会先听完，再判断他需要被理解还是需要方案。', 3],
+        ['能区分对方是在发泄情绪、寻求支持，还是在试探你是否懂他。', 4]
+      ]},
+      { t: '你需要把一个不太好的消息告诉别人时，通常会怎么做？', dim: 'empathy', options: [
+        ['直接说结果，省得拖。', 1],
+        ['会有点顾虑，但表达方式还是比较生硬。', 2],
+        ['会考虑对方当下状态，尽量说得清楚一点。', 3],
+        ['会在表达事实的同时，兼顾对方能不能接住这份信息。', 4]
+      ]},
+      { t: '看到有人情绪很激动时，你更容易？', dim: 'empathy', options: [
+        ['觉得麻烦，想赶紧离开这种场面。', 1],
+        ['知道他情绪很重，但容易被带得也烦起来。', 2],
+        ['会先理解对方为什么会这样，再决定怎么回应。', 3],
+        ['既能感受到对方的情绪，也能保持自己的边界，不被一起卷进去。', 4]
+      ]},
+      { t: '别人临时请你帮一个你其实不太想接的忙。你通常会怎么表达？', dim: 'social', options: [
+        ['不好意思拒绝，最后一边做一边不爽。', 1],
+        ['会拒绝，但说完常常让关系也有点僵。', 2],
+        ['会尽量说明自己的情况，争取把拒绝说得自然一点。', 3],
+        ['能明确表达边界，也能让对方感受到你不是在针对他。', 4]
+      ]},
+      { t: '朋友或同事迟到了很久，你更可能怎么处理？', dim: 'social', options: [
+        ['到了就直接甩脸色，让对方自己体会。', 1],
+        ['嘴上说没事，心里记很久。', 2],
+        ['会表达自己的不舒服，但尽量不把场面弄得太难看。', 3],
+        ['能把感受、事实和期待说清楚，让对方知道问题在哪，又不至于全面翻脸。', 4]
+      ]},
+      { t: '团队里意见不统一时，你更像哪一种？', dim: 'social', options: [
+        ['只想坚持自己的，懒得听太多。', 1],
+        ['会听别人说，但很难把不同想法整合起来。', 2],
+        ['会试着找到大家都能接受的点。', 3],
+        ['既能表达立场，也能把不同人的情绪和诉求一起纳入考虑。', 4]
+      ]},
+      { t: '你和别人产生误会后，通常怎么修复关系？', dim: 'social', options: [
+        ['等对方先来，我不太会主动修。', 1],
+        ['想修，但常常不知道从哪句开始说比较好。', 2],
+        ['会找机会把事情解释清楚。', 3],
+        ['能先确认彼此哪里理解错了，再把感受和边界一起讲明白。', 4]
+      ]}
+    ];
+
+    const resultBands = [
+      {
+        min: 16, max: 28, name: '真性情直给型',
+        tagline: '你的情绪来得很真实，表达也不绕弯，别人通常能很快感受到你的态度。',
+        desc: '你不是没有情商，而是更偏“真反应”路线。你对情绪的表达往往比较直接，不太喜欢反复琢磨气氛和话术。这样的你通常很真实、不拧巴，也容易让人觉得你反应快、态度明。\n\n但在复杂场景里，你可能会更容易被当下感受带着走：想法还没完全想清楚，态度已经先表达出来了；别人一句话的力度，也更容易直接打到你的心情上。你的优势是真诚和不装，你的升级点则是给情绪多一点缓冲，给表达多一点选择。',
+        advice: '1. 当情绪上来时，先在心里补一句：“我现在最明显的感觉是什么？”\n2. 重要场合少用“立刻回应”，多用“先确认、再表达”。\n3. 遇到关系问题时，不只说态度，也说清事实和你的期待。'
+      },
+      {
+        min: 29, max: 40, name: '情绪感应成长型',
+        tagline: '你已经能感觉到情绪和气氛变化，只是有时候还来不及把它们处理顺。',
+        desc: '你对情绪和关系不是没有感觉，很多时候其实已经察觉到哪里不对了，只是还不够稳定：有时能稳住自己，有时又会被场面带偏；有时能读懂别人，有时又会在表达上差半步。\n\n这类结果的特点不是“差”，而是正在成长中。你已经具备情商运作的基础感受力，只要再把情绪觉察、调节和表达方式练顺一点，整体状态会提升得很明显。你不是没有潜力，而是差一个更稳定的处理节奏。',
+        advice: '1. 当你察觉到不舒服时，试着把情绪具体命名，而不是只说“烦”。\n2. 别人情绪不对时，先判断他需要的是安静、理解还是建议。\n3. 练习把“拒绝”“提醒”“解释”说得更短、更清楚。'
+      },
+      {
+        min: 41, max: 50, name: '关系平衡拿捏型',
+        tagline: '你能兼顾自己的感受和他人的感受，很多关系在你这里不容易失控。',
+        desc: '你属于比较稳的类型。你能看见自己的情绪，也能大致读懂别人；表达时通常不会过于生硬，也不至于一味压着自己。很多人和你相处，会觉得你讲道理、懂分寸、比较让人安心。\n\n你的优势在于“平衡感”：既不会什么都往心里吞，也不会什么都往外甩。你知道什么时候该说、什么时候该缓、什么时候该留一点空间。这样的你在关系里通常不极端，既能保住自己，也能照顾场面。',
+        advice: '1. 继续保持你“先理解，再表达”的习惯，这是你的稳定优势。\n2. 关系复杂时，可以进一步练习更精准的情绪命名和反馈。\n3. 当你需要坚定立场时，别因为顾及气氛而把自己的边界说得太轻。'
+      },
+      {
+        min: 51, max: 58, name: '气氛稳定器型',
+        tagline: '你很会看情绪、看场合，也很会把事情往更顺的方向带。',
+        desc: '你已经不只是“会沟通”，而是具备比较强的情绪与关系处理能力。你往往能很快察觉气氛变化，知道什么时候该先接住情绪，什么时候该把话讲清楚，什么时候又需要给彼此一点余地。\n\n很多时候，你像场子里的稳定器。关系快要拧起来时，你有能力把它拉回理性；别人情绪起伏大时，你也更能给出合适的回应。你的高分并不等于你没有情绪，而是你更知道怎样不让情绪随意决定结果。',
+        advice: '1. 你已经很会稳场了，接下来更重要的是别总承担“情绪善后者”的角色。\n2. 在照顾别人情绪的同时，也要记得检查自己的消耗。\n3. 对重要关系来说，适度表达脆弱感，会让你的高情商更有温度。'
+      },
+      {
+        min: 59, max: 64, name: '高情商掌场型',
+        tagline: '你既能读懂情绪，又能稳住节奏，还能把关系和表达一起拿捏住。',
+        desc: '你的整体表现已经接近“高情商天花板型”日常风格。你不只是会说话，更重要的是你能识别情绪、理解动机、管理反应，并把这些能力真正用到关系处理里。你不是单靠圆滑取胜，而是靠清醒、分寸和稳定感。\n\n这类类型的人，通常能把复杂场景拆开看：什么是情绪，什么是事实，什么是边界，什么是当下最适合的表达。别人会觉得你很会处理人际，其实本质上是你更能同时照顾“感受”和“结果”。',
+        advice: '1. 你的优势已经很突出，可以继续保持“既有温度也有边界”的表达方式。\n2. 高情商不等于永远圆场，必要时也要允许自己直接和明确。\n3. 当你总是最会处理关系的人时，更要记得给自己留恢复空间。'
+      }
+    ];
+
+    const dimensionMeta = {
+      awareness: {
+        label: '情绪觉察',
+        levels: [
+          { max: 7, name: '后知后觉', desc: '你更容易先被情绪带着走，之后才慢慢意识到自己为什么不舒服。' },
+          { max: 11, name: '感知在线', desc: '你通常能感觉到情绪变化，只是有时还不够快、不够细。' },
+          { max: 14, name: '观察清楚', desc: '你大多能分清自己和他人的情绪线索，判断也比较稳。' },
+          { max: 16, name: '情绪雷达', desc: '你对情绪变化很敏感，往往能较早分辨情绪来源和走向。' }
+        ]
+      },
+      regulation: {
+        label: '情绪调节',
+        levels: [
+          { max: 7, name: '反应直出', desc: '情绪一来容易直接表现出来，缓冲空间相对少。' },
+          { max: 11, name: '逐步稳住', desc: '你开始会给自己一点缓冲，但稳定度还在成长。' },
+          { max: 14, name: '节奏稳定', desc: '你通常能先稳住反应，再选择合适的表达方式。' },
+          { max: 16, name: '高度自控', desc: '你很会把情绪和行为拆开处理，不容易被当下反应牵着走。' }
+        ]
+      },
+      empathy: {
+        label: '共情理解',
+        levels: [
+          { max: 7, name: '按字面接收', desc: '你更倾向先听表层内容，不太会继续判断背后的情绪。' },
+          { max: 11, name: '能感受到', desc: '你能发现别人情绪不对，但有时还抓不准真正需求。' },
+          { max: 14, name: '读空气在线', desc: '你通常能理解别人话语背后的情绪和处境。' },
+          { max: 16, name: '共情很准', desc: '你不只会体会别人情绪，还能判断对方此刻真正需要什么。' }
+        ]
+      },
+      social: {
+        label: '关系表达',
+        levels: [
+          { max: 7, name: '偏直接处理', desc: '你更看重把态度表达出来，对气氛和分寸的顾及相对少。' },
+          { max: 11, name: '沟通在练习', desc: '你会开始顾及关系，但表达还没完全形成自己的节奏。' },
+          { max: 14, name: '分寸不错', desc: '你通常能把感受、事实和边界说得比较顺。' },
+          { max: 16, name: '稳场高手', desc: '你既能表达自己，也能兼顾关系，不容易把场面推向失控。' }
+        ]
+      }
+    };
+
+    const screens = {
+      intro: document.getElementById('intro'),
+      test: document.getElementById('test'),
+      loading: document.getElementById('loading'),
+      result: document.getElementById('result')
+    };
+
+    const app = { answers: {}, index: 0 };
+    const qList = document.getElementById('questionList');
+    const pBar = document.getElementById('progressBar');
+    const pText = document.getElementById('progressText');
+
+    function show(name) {
+      Object.entries(screens).forEach(([k, v]) => v.classList.toggle('active', k === name));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderQuestions() {
+      qList.innerHTML = '';
+      questions.forEach((q, idx) => {
+        const el = document.createElement('article');
+        el.className = idx === app.index ? 'question-card active' : 'question-card';
+        el.innerHTML = `
+          <div class="qmeta">
+            <span class="badge">第 ${idx + 1} 题</span>
+            <span>单题推进模式 · 共 ${questions.length} 题</span>
+          </div>
+          <div class="qtitle">${q.t}</div>
+          <div class="options">
+            ${q.options.map((o, j) => `
+              <label class="option">
+                <input type="radio" name="q${idx}" value="${j}" ${String(app.answers[idx]) === String(j) ? 'checked' : ''} />
+                <div class="option-code">${String.fromCharCode(65 + j)}</div>
+                <div class="option-text">${o[0]}</div>
+              </label>
+            `).join('')}
+          </div>
+        `;
+        qList.appendChild(el);
+      });
+      qList.querySelectorAll('input').forEach(input => input.addEventListener('click', e => {
+        app.answers[Number(e.target.name.slice(1))] = Number(e.target.value);
+        updateProgress();
+        if (app.index < questions.length - 1) {
+          setTimeout(() => { app.index += 1; renderQuestions(); }, 220);
+        }
+      }));
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const done = Object.keys(app.answers).length;
+      const total = questions.length;
+      pBar.style.width = `${done / total * 100}%`;
+      pText.textContent = `${done} / ${total}`;
+      document.getElementById('prevBtn').hidden = app.index === 0;
+      const answered = app.answers[app.index] !== undefined;
+      const next = document.getElementById('nextBtn');
+      const submit = document.getElementById('submitBtn');
+      next.disabled = !answered;
+      if (app.index === total - 1) {
+        next.style.display = 'none';
+        submit.style.display = 'inline-flex';
+        submit.disabled = done < total;
+      } else {
+        next.style.display = 'inline-flex';
+        submit.style.display = 'none';
+      }
+    }
+
+    function getScores() {
+      const totals = { awareness: 0, regulation: 0, empathy: 0, social: 0, overall: 0 };
+      questions.forEach((q, idx) => {
+        const choiceIdx = app.answers[idx];
+        if (choiceIdx !== undefined) {
+          const score = q.options[choiceIdx][1];
+          totals[q.dim] += score;
+          totals.overall += score;
+        }
+      });
+      return totals;
+    }
+
+    function getBand(score) {
+      return resultBands.find(b => score >= b.min && score <= b.max) || resultBands[2];
+    }
+
+    function getDimensionLevel(dim, score) {
+      const meta = dimensionMeta[dim];
+      return meta.levels.find(level => score <= level.max);
+    }
+
+    function renderBasics(scores) {
+      const grid = document.getElementById('basicGrid');
+      const entries = ['awareness', 'regulation', 'empathy', 'social'].map(key => {
+        const meta = dimensionMeta[key];
+        const level = getDimensionLevel(key, scores[key]);
+        return `
+          <div class="basic-item">
+            <div class="basic-label">${meta.label} · ${scores[key]} / 16</div>
+            <div class="basic-value"><strong>${level.name}</strong><br/>${level.desc}</div>
+          </div>
+        `;
+      });
+      grid.innerHTML = entries.join('');
+    }
+
+    function renderResult() {
+      const scores = getScores();
+      const band = getBand(scores.overall);
+      document.getElementById('resultName').textContent = band.name;
+      document.getElementById('avatarText').textContent = 'EQ';
+      document.getElementById('resultTagline').textContent = band.tagline;
+      document.getElementById('resultDesc').textContent = `${band.desc}\n\n你的总分：${scores.overall} / 64`;
+      document.getElementById('theoryText').textContent = theoryText;
+      document.getElementById('resultAdvice').textContent = band.advice;
+      renderBasics(scores);
+      show('result');
+    }
+
+    function startTest() {
+      app.answers = {};
+      app.index = 0;
+      renderQuestions();
+      show('test');
+    }
+
+    document.getElementById('startBtn').addEventListener('click', startTest);
+    document.getElementById('backHomeBtn').addEventListener('click', () => {
+      if (!Object.keys(app.answers).length || confirm('当前答题进度会丢失，确认返回主页吗？')) location.href = '../../index.html';
+    });
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      if (app.index > 0) { app.index -= 1; renderQuestions(); }
+    });
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      if (app.index < questions.length - 1) { app.index += 1; renderQuestions(); }
+    });
+    document.getElementById('submitBtn').addEventListener('click', () => {
+      show('loading');
+      const logs = ['读取你的情绪线索中…', '整理你的关系应对方式中…', '生成你的段位画像中…'];
+      const text = document.getElementById('loadingText');
+      let i = 0;
+      const timer = setInterval(() => {
+        if (i < logs.length) text.textContent = logs[i++];
+        else { clearInterval(timer); renderResult(); }
+      }, 560);
+    });
+    document.getElementById('restartBtn').addEventListener('click', startTest);
+  </script>
+</body>
+</html>
