@@ -1,544 +1,78 @@
 <!DOCTYPE html>
-<html lang="zh">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-        <title>DogTI</title>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                -webkit-tap-highlight-color: transparent;
-            }
-
-            :root {
-                --black: #111111;
-                --gray-1: #f5f5f5;
-                --gray-2: #e8e8e8;
-                --gray-3: #aaaaaa;
-                --white: #ffffff;
-                --font: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
-            }
-
-            body {
-                background: var(--white);
-                color: var(--black);
-                font-family: var(--font);
-                min-height: 100vh;
-                max-width: 390px;
-                margin: 0 auto;
-                overflow-x: hidden;
-            }
-
-            /* ─── 封面页 ─── */
-            .page {
-                display: none;
-            }
-
-            .page.active {
-                display: block;
-            }
-
-            #page-home {
-                min-height: 100vh;
-                background: #fff;
-                overflow: hidden;
-                position: relative;
-                padding-top: 20px;
-            }
-
-            /* 像素大标题 */
-            .home-pixel-title {
-                /* font-family: 'Press Start 2P', monospace; */
-                /* font-size: 52px; */
-                /* color: #111; */
-                text-align: center;
-                padding: 24px 0 0;
-                /* letter-spacing: 4px; */
-                line-height: 1;
-                position: relative;
-                z-index: 2;
-                /* -webkit-text-stroke: 3px #111; */
-                /* paint-order: stroke fill; */
-            }
-
-            /* 动物滚动区域 */
-            .animals-stage {
-                width: 100%;
-                overflow: hidden;
-                padding: 12px 0 0;
-                display: flex;
-                flex-direction: column;
-                gap: 0;
-            }
-
-            .animals-row {
-                display: flex;
-                gap: 0;
-                width: max-content;
-            }
-
-            .animals-row.row-1 {
-                animation: scroll-left 18s linear infinite;
-            }
-
-            .animals-row.row-2 {
-                animation: scroll-right 22s linear infinite;
-            }
-
-            .animals-row.row-3 {
-                animation: scroll-left 16s linear infinite;
-            }
-
-            @keyframes scroll-left {
-                0% {
-                    transform: translateX(0);
-                }
-
-                100% {
-                    transform: translateX(-50%);
-                }
-            }
-
-            @keyframes scroll-right {
-                0% {
-                    transform: translateX(-50%);
-                }
-
-                100% {
-                    transform: translateX(0);
-                }
-            }
-
-            .animal-cell {
-                width: 96px;
-                height: 96px;
-                display: grid;
-                place-items: center;
-                flex: 0 0 auto;
-            }
-
-            /* 底部 */
-            .home-bottom {
-                padding: 6px 20px 22px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                position: relative;
-                z-index: 2;
-                background: #fff;
-            }
-
-            .btn-start {
-                background: #111;
-                color: #fff;
-                border: none;
-                border-radius: 999px;
-                height: 54px;
-                padding: 0 24px;
-                min-width: 170px;
-                font-size: 18px;
-                font-weight: 700;
-                letter-spacing: .5px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
-                box-shadow: 0 6px 0 #00000010;
-            }
-
-            .btn-start:active {
-                transform: scale(.98);
-            }
-
-            .btn-start-icon {
-                width: 12px;
-                height: 12px;
-                background: #fff;
-                border-radius: 999px;
-                display: inline-block;
-            }
-
-            /* ─── 题目页 ─── */
-            #page-quiz {
-                min-height: 100vh;
-                background: #fff;
-                display: none;
-                padding: 18px 18px 24px;
-            }
-
-            #page-quiz.active {
-                display: flex;
-                flex-direction: column;
-            }
-
-            .quiz-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin-bottom: 16px;
-            }
-
-            .btn-back {
-                width: 36px;
-                height: 36px;
-                border: none;
-                background: #f2f2f2;
-                border-radius: 999px;
-                font-size: 18px;
-                line-height: 1;
-            }
-
-            .quiz-counter {
-                font-size: 14px;
-                color: #666;
-                font-weight: 600;
-            }
-
-            .progress-wrap {
-                margin-bottom: 24px;
-            }
-
-            .progress-track {
-                width: 100%;
-                height: 8px;
-                background: #efefef;
-                border-radius: 999px;
-                overflow: hidden;
-            }
-
-            .progress-fill {
-                height: 100%;
-                width: 10%;
-                background: #111;
-                border-radius: 999px;
-                transition: width .25s ease;
-            }
-
-            .quiz-body {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .quiz-dog-wrap {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                margin-bottom: 18px;
-            }
-
-            .quiz-dog-icon {
-                width: 48px;
-                height: 48px;
-                display: grid;
-                place-items: center;
-                flex: 0 0 auto;
-            }
-
-            .quiz-dog-bubble {
-                background: #f6f6f6;
-                color: #666;
-                border-radius: 14px;
-                padding: 10px 12px;
-                font-size: 13px;
-                line-height: 1.3;
-            }
-
-            .question-text {
-                font-size: 28px;
-                line-height: 1.32;
-                font-weight: 800;
-                letter-spacing: -.6px;
-                margin: 10px 0 24px;
-            }
-
-            .options {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .opt {
-                width: 100%;
-                border: 2px solid #eee;
-                background: #fff;
-                border-radius: 18px;
-                padding: 16px 16px 16px 14px;
-                text-align: left;
-                display: flex;
-                align-items: flex-start;
-                gap: 12px;
-                font-size: 16px;
-                line-height: 1.5;
-                transition: .2s ease;
-            }
-
-            .opt-key {
-                width: 28px;
-                height: 28px;
-                border-radius: 999px;
-                background: #f3f3f3;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: 800;
-                flex: 0 0 auto;
-            }
-
-            .opt.selected {
-                border-color: #111;
-                background: #fafafa;
-            }
-
-            .btn-next {
-                width: 100%;
-                height: 56px;
-                border: none;
-                border-radius: 999px;
-                background: #ddd;
-                color: #fff;
-                font-size: 18px;
-                font-weight: 800;
-                margin-top: 18px;
-                transition: .2s ease;
-            }
-
-            .btn-next.enabled {
-                background: #111;
-            }
-
-            /* ─── 结果页 ─── */
-            #page-result {
-                min-height: 100vh;
-                background: #fff;
-                display: none;
-                padding: 18px 18px 26px;
-            }
-
-            #page-result.active {
-                display: block;
-            }
-
-            .result-top {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin-bottom: 20px;
-            }
-
-            .result-chip {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 12px;
-                border-radius: 999px;
-                background: #f6f6f6;
-                font-size: 13px;
-                color: #555;
-                font-weight: 700;
-            }
-
-            .result-main {
-                text-align: center;
-            }
-
-            .result-dog-frame {
-                width: 150px;
-                height: 150px;
-                margin: 0 auto 12px;
-                display: grid;
-                place-items: center;
-            }
-
-            .result-type {
-                font-size: 34px;
-                font-weight: 900;
-                line-height: 1.12;
-                letter-spacing: -1px;
-                margin-bottom: 8px;
-            }
-
-            .result-subname {
-                font-size: 16px;
-                color: #666;
-                margin-bottom: 16px;
-                font-weight: 700;
-            }
-
-            .result-quote {
-                background: #fafafa;
-                border-radius: 18px;
-                padding: 16px;
-                font-size: 16px;
-                line-height: 1.6;
-                color: #333;
-                margin-bottom: 18px;
-            }
-
-            .trait-list {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
-                justify-content: center;
-                margin-bottom: 20px;
-            }
-
-            .trait {
-                padding: 8px 12px;
-                background: #f2f2f2;
-                border-radius: 999px;
-                font-size: 13px;
-                font-weight: 700;
-                color: #444;
-            }
-
-            .result-desc {
-                font-size: 16px;
-                line-height: 1.8;
-                color: #333;
-                text-align: left;
-                margin-bottom: 24px;
-            }
-
-            .result-actions {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .btn-action {
-                width: 100%;
-                height: 54px;
-                border-radius: 999px;
-                border: none;
-                font-size: 17px;
-                font-weight: 800;
-            }
-
-            .btn-share {
-                background: #111;
-                color: #fff;
-            }
-
-            .btn-retry {
-                background: #f2f2f2;
-                color: #111;
-            }
-
-            @media (max-width: 390px) {
-                .question-text {
-                    font-size: 26px;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="page active" id="page-home">
-            <div class="home-pixel-title">
-                <img data-asset="DOGTI标题.png" style="max-width:75%;height:auto;display:block;margin:0 auto;">
-            </div>
-            <div class="animals-stage">
-                <div class="animals-row row-1">
-                    <div class="animal-cell"><img data-asset="杜宾.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="边牧.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="金毛.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="比格.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="阿拉斯加.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="比熊.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="柴犬.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="德牧.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="杜宾.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="边牧.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="金毛.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="比格.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="阿拉斯加.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="比熊.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="柴犬.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="德牧.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                </div>
-                <div class="animals-row row-2">
-                    <div class="animal-cell"><img data-asset="哈士奇.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="拉布拉多.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="泰迪.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="萨摩耶.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="马尔济斯.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="柯基.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="松狮.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="腊肠.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="哈士奇.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="拉布拉多.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="泰迪.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="萨摩耶.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="马尔济斯.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="柯基.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="松狮.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="腊肠.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                </div>
-                <div class="animals-row row-3">
-                    <div class="animal-cell"><img data-asset="杜宾.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="边牧.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="金毛.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="比格.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="阿拉斯加.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="比熊.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="柴犬.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="德牧.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="哈士奇.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="拉布拉多.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="泰迪.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="萨摩耶.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="马尔济斯.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="柯基.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="松狮.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="animal-cell"><img data-asset="腊肠.png" style="width:96px;height:96px;image-rendering:pixelated;object-fit:contain"></div>
-                </div>
-            </div>
-            <div class="home-bottom">
-                <img data-asset="文案.png" style="max-width:90%;height:auto;display:block;margin:0 auto 28px;">
-                <button class="btn-start" onclick="startQuiz()"><span class="btn-start-icon"></span>开始测试</button>
-            </div>
-        </div>
-
-        <div class="page" id="page-quiz">
-            <div class="quiz-header">
-                <button class="btn-back" onclick="goBack()">←</button>
-                <span class="quiz-counter" id="quiz-counter">1 / 10</span>
-                <div style="width:36px"></div>
-            </div>
-            <div class="progress-wrap">
-                <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:10%"></div></div>
-            </div>
-            <div class="quiz-body">
-                <div class="quiz-dog-wrap">
-                    <div class="quiz-dog-icon" id="quiz-dog-icon"><img data-asset="柴犬.png" style="width:40px;height:40px;image-rendering:pixelated;object-fit:contain"></div>
-                    <div class="quiz-dog-bubble" id="quiz-dog-bubble">认真想想，别骗我</div>
-                </div>
-                <div class="question-text" id="question-text"></div>
-                <div class="options" id="options-wrap"></div>
-            </div>
-            <button class="btn-next" id="btn-next" onclick="nextQuestion()">继续 →</button>
-        </div>
-
-        <div class="page" id="page-result">
-            <div class="result-top">
-                <div class="result-chip">DogTI 结果</div>
-                <div class="result-chip" id="result-date"></div>
-            </div>
-            <div class="result-main">
-                <div class="result-dog-frame" id="result-dog-frame"></div>
-                <div class="result-type" id="result-type"></div>
-                <div class="result-subname" id="result-subname"></div>
-                <div class="result-quote"><span id="result-quote-text"></span></div>
-                <div class="trait-list" id="trait-list"></div>
-                <div class="result-desc" id="result-desc"></div>
-            </div>
-            <div class="result-actions">
-                <button class="btn-action btn-share" onclick="shareResult()">分享给朋友</button>
-                <button class="btn-action btn-retry" onclick="retryQuiz()">再测一次</button>
-            </div>
-        </div>
-
-        <script>
-            const ASSETS = {"DOGTI标题.png":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqUAAABmCAYAAABlE63aAAAC/klEQVR4nO3b0U3DMBRA0UIkkd4wA3R0M0O0BGxhBujoZgYJqOeATPSwdQ8B2ct3JIv74fX2ecj+9QAAAHh+2WwGQF4qvgIAACjlkAIAAEI5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAAAQyiEFAABGOaQAAEApRxQAABDKIQUAAEY5pAAAQClHFAAAEMohBQAARjmkAABAKYcUAACQvQAnTQ6BxN5oLwAAAABJRU5ErkJggg==","文案.png":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAb0AAABlCAYAAAAvyNaGAAAFlElEQVR4nO3dX0iV9R/H8fefc3c6mW62bZ2CxlENQ2xMLiQSE8ZUVlb3U5FGFHdJbLhE5aKpQ93YI1JQoK7YQhDRZ+4CFE0l0TQwCAlMpZifjB4/v+49e/M/7+zPfZx3x+v1+v2e/fK7nO95znPeeccw5QAAAAAADg+R7t1xkAAAAA8LRQ6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABAmSh0AAAAAChT6AEAAABA+QdqwU1B0/fhXQAAAABJRU5ErkJggg==","杜宾.png":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhAAAAGQCAYAAABjv9lWAAA5E0lEQVR4nO3dS3LcthGG4Y0lT7Y5HyCyyRgtERlZpT+kdff+V4TzKWR+sdgB1LCuD5pTS67URAbgC3Oa5n1+eR6AN8Z6+f4BAGA84AIAgBFwAQDACHgAAEAIuAAAYAQcAAAwAi4AABgBFwAADICLAAA+wPmW7wD4zX1+8r8b0wzW...TRUNCATED
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DogTI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#fff;--fg:#111;--muted:#8b8b8b;--line:#ececec;--soft:#f6f6f6;--yellow:#f1e36a}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--fg);max-width:420px;margin:0 auto;min-height:100vh}
+.page{display:none;min-height:100vh}.page.active{display:flex;flex-direction:column}
+.home{padding:28px 18px 24px;overflow:hidden}.hero{margin-bottom:24px}
+.hero h1{font-size:28px;line-height:1.25;font-weight:900;display:inline;background:linear-gradient(transparent 58%,var(--yellow) 58%)}
+.hero .sub{margin-top:14px;color:#9aa0ab;font-size:12px;font-style:italic;letter-spacing:.5px}
+.logo{font-size:58px;font-weight:900;letter-spacing:4px;line-height:1;margin:12px 0 26px;font-family:monospace}
+.marquee{display:flex;flex-direction:column;gap:14px;margin-bottom:34px}.row{display:flex;gap:10px;width:max-content;animation:moveL 18s linear infinite}.row.r2{animation:moveR 20s linear infinite}.row.r3{animation-duration:16s}
+@keyframes moveL{from{transform:translateX(0)}to{transform:translateX(-50%)}}@keyframes moveR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.breed{flex:0 0 auto;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:#fff;min-width:92px;text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+.breed b{display:block;font-size:16px;margin-bottom:4px}.breed span{font-size:11px;color:var(--muted)}
+.start-wrap{margin-top:auto;padding-top:16px}.copy{text-align:center;color:#9aa0ab;font-size:13px;margin-bottom:24px;line-height:1.7}
+.start{width:100%;height:58px;border:none;border-radius:999px;background:#111;color:#fff;font-size:18px;font-weight:800;cursor:pointer}
+.quiz{padding:16px 18px 24px}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.back{width:36px;height:36px;border:none;border-radius:50%;background:var(--soft);font-size:18px;cursor:pointer}.count{font-size:13px;color:var(--muted);font-weight:700}
+.bar{height:6px;background:var(--line);border-radius:999px;overflow:hidden;margin-bottom:22px}.fill{height:100%;background:#111;width:0;transition:width .25s ease}
+.hintbox{display:flex;gap:12px;align-items:flex-start;background:var(--soft);border-radius:16px;padding:12px 14px;margin-bottom:18px}.hinticon{width:42px;height:42px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;flex:0 0 auto}.hinttxt{font-size:12px;color:var(--muted);line-height:1.5;padding-top:2px}
+.question{font-size:26px;line-height:1.35;font-weight:900;letter-spacing:-.5px;margin-bottom:22px}.opts{display:flex;flex-direction:column;gap:10px}
+.opt{width:100%;padding:15px 14px;border:2px solid var(--line);background:#fff;border-radius:16px;text-align:left;display:flex;gap:12px;font-size:15px;line-height:1.55;cursor:pointer}.opt .key{width:28px;height:28px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:0 0 auto}.opt.selected{border-color:#111;background:#fafafa}
+.next{margin-top:18px;width:100%;height:54px;border:none;border-radius:999px;background:#d8d8d8;color:#fff;font-size:17px;font-weight:800;cursor:pointer}.next.enabled{background:#111}
+.result{padding:18px 18px 28px}.chips{display:flex;justify-content:space-between;margin-bottom:20px;gap:10px}.chip{padding:8px 12px;border-radius:999px;background:var(--soft);font-size:12px;color:#666;font-weight:700}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px 18px 20px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.03)}
+.avatar{width:108px;height:108px;border-radius:24px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto 14px}.type{font-size:32px;line-height:1.12;font-weight:900;letter-spacing:-1px;margin-bottom:8px}.subname{font-size:15px;color:#666;font-weight:700;margin-bottom:14px}.quote{background:#fafafa;border-radius:16px;padding:14px 12px;font-size:15px;line-height:1.65;margin-bottom:16px}
+.traits{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px}.trait{padding:7px 11px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:700;color:#555}.desc{text-align:left;font-size:15px;line-height:1.8;color:#333}.actions{display:flex;flex-direction:column;gap:12px;margin-top:18px}.btn{height:52px;border:none;border-radius:999px;font-size:16px;font-weight:800;cursor:pointer}.primary{background:#111;color:#fff}.secondary{background:var(--soft);color:#111}
+</style>
+</head>
+<body>
+<section id="home" class="page home active">
+<div class="hero"><h1>重生之我变成了一只狗</h1><div class="sub">“这一次，我要活出自己的狗生”</div></div>
+<div class="logo">DOGTI</div>
+<div class="marquee">
+<div class="row"><div class="breed"><b>🐶</b><span>柴犬</span></div><div class="breed"><b>🐶</b><span>哈士奇</span></div><div class="breed"><b>🐶</b><span>边牧</span></div><div class="breed"><b>🐶</b><span>金毛</span></div><div class="breed"><b>🐶</b><span>比格</span></div><div class="breed"><b>🐶</b><span>德牧</span></div><div class="breed"><b>🐶</b><span>杜宾</span></div><div class="breed"><b>🐶</b><span>拉布拉多</span></div><div class="breed"><b>🐶</b><span>柴犬</span></div><div class="breed"><b>🐶</b><span>哈士奇</span></div><div class="breed"><b>🐶</b><span>边牧</span></div><div class="breed"><b>🐶</b><span>金毛</span></div><div class="breed"><b>🐶</b><span>比格</span></div><div class="breed"><b>🐶</b><span>德牧</span></div><div class="breed"><b>🐶</b><span>杜宾</span></div><div class="breed"><b>🐶</b><span>拉布拉多</span></div></div>
+<div class="row r2"><div class="breed"><b>🐾</b><span>阿拉斯加</span></div><div class="breed"><b>🐾</b><span>萨摩耶</span></div><div class="breed"><b>🐾</b><span>马尔济斯</span></div><div class="breed"><b>🐾</b><span>柯基</span></div><div class="breed"><b>🐾</b><span>松狮</span></div><div class="breed"><b>🐾</b><span>比熊</span></div><div class="breed"><b>🐾</b><span>腊肠</span></div><div class="breed"><b>🐾</b><span>泰迪</span></div><div class="breed"><b>🐾</b><span>阿拉斯加</span></div><div class="breed"><b>🐾</b><span>萨摩耶</span></div><div class="breed"><b>🐾</b><span>马尔济斯</span></div><div class="breed"><b>🐾</b><span>柯基</span></div><div class="breed"><b>🐾</b><span>松狮</span></div><div class="breed"><b>🐾</b><span>比熊</span></div><div class="breed"><b>🐾</b><span>腊肠</span></div><div class="breed"><b>🐾</b><span>泰迪</span></div></div>
+<div class="row r3"><div class="breed"><b>🐕</b><span>杜宾</span></div><div class="breed"><b>🐕</b><span>边牧</span></div><div class="breed"><b>🐕</b><span>金毛</span></div><div class="breed"><b>🐕</b><span>比格</span></div><div class="breed"><b>🐕</b><span>柴犬</span></div><div class="breed"><b>🐕</b><span>哈士奇</span></div><div class="breed"><b>🐕</b><span>拉布拉多</span></div><div class="breed"><b>🐕</b><span>泰迪</span></div><div class="breed"><b>🐕</b><span>杜宾</span></div><div class="breed"><b>🐕</b><span>边牧</span></div><div class="breed"><b>🐕</b><span>金毛</span></div><div class="breed"><b>🐕</b><span>比格</span></div><div class="breed"><b>🐕</b><span>柴犬</span></div><div class="breed"><b>🐕</b><span>哈士奇</span></div><div class="breed"><b>🐕</b><span>拉布拉多</span></div><div class="breed"><b>🐕</b><span>泰迪</span></div></div>
+</div>
+<div class="start-wrap"><div class="copy">不是测你适不适合养狗，<br>是测你如果真成了一只狗，会是哪一型。</div><button class="start" onclick="startQuiz()">开始测试</button></div>
+</section>
+<section id="quiz" class="page quiz">
+<div class="top"><button class="back" onclick="goBack()">←</button><div class="count" id="count">1 / 12</div><div style="width:36px"></div></div>
+<div class="bar"><div class="fill" id="fill"></div></div>
+<div class="hintbox"><div class="hinticon" id="hintIcon">🐶</div><div class="hinttxt" id="hint"></div></div>
+<div class="question" id="question"></div>
+<div class="opts" id="opts"></div>
+<button class="next" id="next" onclick="nextQuestion()">继续 →</button>
+</section>
+<section id="result" class="page result">
+<div class="chips"><div class="chip">DogTI 结果</div><div class="chip" id="date"></div></div>
+<div class="card"><div class="avatar" id="avatar">🐶</div><div class="type" id="type"></div><div class="subname" id="subname"></div><div class="quote" id="quote"></div><div class="traits" id="traits"></div><div class="desc" id="desc"></div></div>
+<div class="actions"><button class="btn primary" onclick="shareResult()">分享给朋友</button><button class="btn secondary" onclick="retryQuiz()">再测一次</button></div>
+</section>
+<script>
+const questions=[{"text":"在外面遇到了一条从没见过的陌生狗，你怎么做？","hint":"社交还是不社交，这是个问题","options":[{"key":"A","text":"直接冲上去，先闻为敬，交朋友这件事从不犹豫","dim":"E"},{"key":"B","text":"在旁边观望，确认对方没问题再慢慢靠近","dim":"I"},{"key":"C","text":"绕开走，今天不想社交","dim":"I"}]},{"text":"你发现了一条从没走过的新路，你会？","hint":"要不要拐进去","options":[{"key":"A","text":"立刻拐进去，不知道通向哪才更想走","dim":"N"},{"key":"B","text":"记下来，下次做好准备再来探","dim":"J"},{"key":"C","text":"走了两步，觉得原来那条路也挺好的，回去了","dim":"S"}]},{"text":"好朋狗被一条大狗欺负了，你怎么反应？","hint":"这时候你第一个动作是什么","options":[{"key":"A","text":"直接上，先把那条狗挡住再说","dim":"T"},{"key":"B","text":"冲过去陪在好朋狗身边，紧紧贴着它","dim":"F"},{"key":"C","text":"先评估一下体型差距，再决定怎么出手","dim":"S"}]},{"text":"你正在睡觉，美美地做着梦，梦里你在干什么？","hint":"你的梦比你诚实多了","options":[{"key":"A","text":"在一片巨大的草地上自由狂奔，后面有没有人追我不知道，反正先跑爽了再说","dim":"P"},{"key":"B","text":"梦见自己成了一个超级重要的角色，似乎正要完成什么重大任务","dim":"J"},{"key":"C","text":"梦里出现了一些奇怪的画面，醒来后还在想这到底什么意思","dim":"N"}]},{"text":"你最讨厌哪种狗？","hint":"讨厌的，往往是你最不想成为的","options":[{"key":"A","text":"那种过于爱表现、一天不被看见就难受的","dim":"I"},{"key":"B","text":"那种做事没谱、说变就变、让人抓不住的","dim":"J"},{"key":"C","text":"那种太冷静太会算，一看就不好惹的","dim":"F"}]},{"text":"如果今天必须一个人待着，你最可能怎么过？","hint":"没有社交任务的时候，你会自动变回哪种状态","options":[{"key":"A","text":"打开手机开始和几个人轮流聊天，安静太久会不习惯","dim":"E"},{"key":"B","text":"找个舒服的角落待着，做自己的事，没人打扰正好","dim":"I"},{"key":"C","text":"嘴上说要休息，结果开始想一些平时没空想的东西","dim":"N"}]},{"text":"朋友临时约你今晚出去，你第一反应更像？","hint":"别装，这种时候反应最快","options":[{"key":"A","text":"走啊！我都想好穿什么了","dim":"E"},{"key":"B","text":"有点突然，我得先缓一下，看状态","dim":"I"},{"key":"C","text":"先问几点、去哪、多久、都有谁","dim":"J"}]},{"text":"你更容易因为什么破防？","hint":"真正刺痛你的通常不是大事","options":[{"key":"A","text":"别人明明说好了，却突然变卦","dim":"J"},{"key":"B","text":"被误解，而且对方根本没发现你被误解了","dim":"F"},{"key":"C","text":"脑子里想做的太多，但现实一点都不配合","dim":"N"}]},{"text":"有人夸你很厉害，你通常会？","hint":"夸奖这件事，最能看出你面对自我的方式","options":[{"key":"A","text":"嘴上谦虚两句，心里其实已经开始安排下一步了","dim":"T"},{"key":"B","text":"表面装镇定，回去之后能想很久","dim":"I"},{"key":"C","text":"立刻开始不好意思，想把功劳分给别人","dim":"F"}]},{"text":"你做决定更像哪一种？","hint":"别想理想状态，想你平时最常那种","options":[{"key":"A","text":"差不多就行，先选了再说，过程中再调整","dim":"P"},{"key":"B","text":"会先在脑子里把各种情况过一遍，再选最稳的","dim":"J"},{"key":"C","text":"表面上看起来很快，其实是靠直觉瞬间锁定","dim":"N"}]},{"text":"如果某件事终于被你做成了，你最可能的反应是？","hint":"成功之后你会先对谁交代——别人还是自己","options":[{"key":"A","text":"立刻想找人分享一下，最好现在就让大家知道","dim":"E"},{"key":"B","text":"心里美了一下，没说出来","dim":"I"},{"key":"C","text":"已经开始想下一件要做的事了","dim":"T"}]},{"text":"最后一题：如果可以选，你最想过哪种狗生？","hint":"认真想想，这是你真实的向往","options":[{"key":"A","text":"每天认识新朋友，去很多地方，把世界都闻一遍","dim":"E"},{"key":"B","text":"有一个最懂我的人，安安静静待在一起就够了","dim":"I"},{"key":"C","text":"自由自在，想去哪就去哪，没有牵绳没有规矩","dim":"P"}]}];
+const results={"气场先到三步的杜宾":{"subname":"不用担心，我来搞定","quote":"不是我控制欲强，是你们动作太慢。","traits":["说到做到，不讲废话","一眼看穿哪里有漏洞","让人又依赖又有压力","天生的组局人"],"desc":"杜宾犬走进一个房间，所有狗都会下意识让路——不是因为它凶，是因为它太有确定感了。它专注、自律、对自己要求极高，认定的事绝不拖泥带水。你也是那种还没开口，气场已经先到的类型。脑子转速比别人快三档，说话的时候已经想好五步之后了。","dog":"doberman"},"把所有人都绕晕了的边牧":{"subname":"智商在线但没有刹车","quote":"我只是在帮你们看到你们没看到的可能性。","traits":["点子多到自己都跟不上","辩论必胜但不知道赢了有啥用","话题跳跃是日常","最怕无聊"],"desc":"边牧是世界公认智商最高的犬种，但它需要大量刺激才不会把家里拆了——脑子不转就开始搞破坏。它停不下来，闲着比累着更难受。你也是那种脑子一旦停下来就会开始搞事情的人，聊天对你来说是游戏，赢了也不知道下一关是什么。","dog":"bordercollie"},"比你更担心你的金毛":{"subname":"全场情绪承包商","quote":"你们先说，我没事的，真的。","traits":["最先感知到气氛不对","委屈自己帮所有人","掉眼泪前先问别人没事吧","群里最快回消息"],"desc":"金毛的眼神里永远有一种「你没事吧」的关切，它对人类情绪的感知力强得像装了雷达，而且它真的在乎，不是客套。你也是那种还没问就已经感知到对方情绪的人。你帮了很多人，但没人知道你也会偶尔希望有人先问问你。","dog":"golden"},"什么都想闻一口的比格":{"subname":"人间好奇心漩涡","quote":"等等！这个也好玩！那个先别关！","traits":["同时开了好几个新方向","热情真实但寿命只有两周","认识新朋友比记住名字快","最怕无聊"],"desc":"比格犬的鼻子是狗界最灵敏的，对一切气味都无法抗拒，闻到什么有意思的就冲过去，根本管不住自己。它不是乱，它只是对世界的兴趣太多了。你也是那种什么都能让你兴奋、但兴奋完了发现不知道接下来要干嘛的人。你的生命是一部群像喜剧。","dog":"beagle"},"把所有人都管住了的德牧":{"subname":"靠谱是我最高荣誉","quote":"说好几点就几点，这不是很基本的事吗？","traits":["行程排得满满当当","迟到的人会被记住","说「没问题」前先确认细节","天然的可信赖体质"],"desc":"德牧是警犬界的标杆，不是因为它凶，是因为它认真——认真到别的狗都跟不上那股劲儿。它把每一件事当正经事来对待，不接受差不多。你也是那种把「靠谱」当成最高荣誉的人。别人不守承诺你会皱眉，但只要你说行，就是真的行。","dog":"germanshepherd"},"说好散步结果跑丢的哈士奇":{"subname":"人形随机事件发生器","quote":"计划？什么计划？我有计划吗？","traits":["说好的事不保证明天还记得","永远在整活","掉线是日常","但搞起来真的很爽"],"desc":"哈士奇的人生哲学是「规律是别人的事」——它能在两秒内无缝切换「我是乖狗狗」和「我要出逃」两种状态，令主人完全无法预测。但你不得不承认，跟它出门总会发生有意思的事。你也是那种身边人永远无法预测下一步的类型，结局通常有趣，偶尔是灾难性的。","dog":"husky"},"拒绝不了任何人的拉布拉多":{"subname":"有求必应的宇宙中心","quote":"我帮，我帮，都帮，真的不麻烦。","traits":["说不出口「我不想去」","帮完了才发现自己很累","被需要会开心","最了解每个人的喜好"],"desc":"拉布拉多是被选为导盲犬最多的犬种，不是因为它最聪明，是因为它最愿意帮你——帮到你不需要它了，它也不介意。它天生把别人的需求放在前面。你也是那种不好意思让别人失望的人，说「好」总是比说「不」容易，虽然代价是有时候把自己说进去了。","dog":"labrador"},"出门必须好看的泰迪":{"subname":"天生要被看见","quote":"人生苦短，今天的造型不能将就。","traits":["镜头感天生","气氛不对立刻出手救场","朋友圈比日记还真实","让无聊的场合有救"],"desc":"泰迪的毛是可以造型的，它们也通常知道自己好看——出门前要梳毛，拍照要摆姿势，走在路上自带回头率。它不是浮夸，它只是对「出场感」天生敏感。你也是那种走进房间之前已经预设好自己出场方式的人，你的天职是让大家开心。","dog":"poodle"},"假装冷静的柴犬":{"subname":"我不孤僻，我在筛选","quote":"不是不在乎，只是不值得让你看到我在乎。","traits":["进门槛高但进了就很稳","表情淡定但内心戏很多","宁可自己搞定也不解释","睡前复盘所有细节"],"desc":"柴犬是「猫系狗」，高傲、独立、对人有门槛，但认定你之后是真的认定了，不会随便动摇。它的表情永远像在说「关我什么事」，但其实什么都默默注意到了。你也是那种外表淡定、内部服务器飞速运转的人，别人以为你不在乎，但你已经把今天所有细节复盘了一遍。","dog":"shiba"},"想到一半就忘了的阿拉斯加":{"subname":"大型行走发呆装置","quote":"刚才有个很好的想法，现在消失了。","traits":["外表凶猛内心温吞","脑内频道永远开着","懒得解释但其实早想通了","发呆时可能是天才"],"desc":"阿拉斯加长得像狼，但本质是一只喜欢发呆的大型犬——它看起来一直在想什么严肃的事，其实脑子里可能在播一首歌。它不慌不忙，慢慢来，但慢下来之后往往比谁都想得深。你也是那种坐着看起来什么都没做、实际上已经在脑子里把一件事转了十八个角度的人。不是慢，是深。","dog":"malamute"},"永远在笑但只有自己知道为什么的萨摩耶":{"subname":"微笑刺客","quote":"我很好。（我不好。但我处理好了。）","traits":["治愈别人是本能","自己偷偷崩掉再重启","说「没事」基本都有事","共情雷达24小时开机"],"desc":"萨摩耶的微笑是世界上最治愈的表情之一，但这个品种其实很容易焦虑——它把情绪藏得很好，但压力一大就会莫名悲伤。你也是那个对外永远阳光、对内偶尔有个小角落在悄悄坍塌的人。你治愈了很多人，但治愈你的人，你还没遇到够多。","dog":"samoyed"},"你不懂的马尔济斯":{"subname":"精神世界建筑师","quote":"这首歌的第三节歌词让我哭了，你们不会懂的。","traits":["内心宇宙比现实还大","对美有偏执的标准","表达困难但感受满分","被真正理解那一刻会全力爱你"],"desc":"马尔济斯外表娇小安静，但它的内心完全是另一个世界——它对情绪极度敏感，对它在乎的人极度忠诚，但它不会随便对谁打开。你也是那种别人看起来在发呆、自己已经在脑内写完一部剧本的人。没人懂你很孤独，但被懂了的那一刻，什么都值了。","dog":"maltese"},"没做完不能睡觉的柯基":{"subname":"腿短但执行力无限","quote":"说好今天做完的，凌晨两点也要做完。","traits":["待办清单从不过夜","迟交让自己睡不着","靠谱到让人有点压力","「差不多」三个字是异类"],"desc":"柯基身材紧凑，但它是正经的牧羊犬——用叫声和绕圈驱赶比自己大好几倍的牲口，执行力不靠体型靠决心。它认定要完成的事，绝对不会半途而废。你也是那种一旦认定要做就必须做完的人，不是完美主义，是「说出去了就不能反悔」的朴素信念在撑着你。","dog":"corgi"},"不需要你担心的松狮":{"subname":"沉默系解题高手","quote":"没什么好说的，我已经搞定了。","traits":["话少但每句都有用","动手能力强到诡异","不解释但结果在那里","被需要但不爱被打扰"],"desc":"松狮犬是最「不黏人」的犬种，它独立、冷静、对外人保持距离，但它认定的人它会一直默默守着。它不会说「我来帮你」，但出了事第一个冷静处理的就是它。你也是那种存在本身就是安全感的人，不需要解释，结果在那里就够了。","dog":"chowchow"},"记住你不喜欢香菜的比熊":{"subname":"世界上最细心的人","quote":"你没说，但我记得你上次提过。","traits":["生日不会忘","忌口比本人更清楚","不邀功但默默都做了","被忽视会难过但不说"],"desc":"比熊外表蓬松软萌，骨子里是一部超级细致的人际关系记录仪——它记得你上次喝了什么、喜欢哪种玩具，把照顾你当成一种本能。你也是那种把「照顾别人」当作日常操作系统的人。你做的很多事别人没注意到，但那不影响你继续做。","dog":"bichon"},"急不起来的腊肠":{"subname":"慢节奏生活家","quote":"急什么，好东西都要慢慢来的。","traits":["催不动是天赋","享受当下是人生观","对生活有自己的审美","不内卷但也不委屈"],"desc":"腊肠犬用四条短腿以自己的节奏探索世界，没有人能催它——它就是要慢慢走，慢慢闻，把每一步都踩实了再说。它不是懒，它只是不觉得「快」是什么了不起的优点。你也是那种不跟风、不焦虑未来、认真把今天过好的人。别人在赶路，你在看路边的花。这不是慢，这是一种清醒。","dog":"dachshund"}};
+const dogIcons={doberman:'🐕‍🦺',bordercollie:'🧠',golden:'🦮',beagle:'🐾',germanshepherd:'🛡️',husky:'❄️',labrador:'🤍',poodle:'✨',shiba:'🍠',malamute:'☁️',samoyed:'☀️',maltese:'🎀',corgi:'🦴',chowchow:'😶',bichon:'🫧',dachshund:'🛏️'};
+const typeMap={ENTJ:'气场先到三步的杜宾',ENTP:'把所有人都绕晕了的边牧',ENFJ:'比你更担心你的金毛',ENFP:'什么都想闻一口的比格',ESTJ:'把所有人都管住了的德牧',ESTP:'说好散步结果跑丢的哈士奇',ESFJ:'拒绝不了任何人的拉布拉多',ESFP:'出门必须好看的泰迪',INTJ:'假装冷静的柴犬',INTP:'想到一半就忘了的阿拉斯加',INFJ:'永远在笑但只有自己知道为什么的萨摩耶',INFP:'你不懂的马尔济斯',ISTJ:'没做完不能睡觉的柯基',ISTP:'不需要你担心的松狮',ISFJ:'记住你不喜欢香菜的比熊',ISFP:'急不起来的腊肠'};
+const quizIcons=['🐶','🐕','🐾','🦴','🛏️','🎀','✨','❄️','☁️','☀️','🤍','🛡️'];
+let currentQ=0,answers=[],selectedOpt=null;
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function startQuiz(){currentQ=0;answers=[];renderQuestion();showPage('quiz')}
+function renderQuestion(){const q=questions[currentQ];selectedOpt=null;document.getElementById('count').textContent=`${currentQ+1} / ${questions.length}`;document.getElementById('fill').style.width=`${(currentQ/questions.length)*100}%`;document.getElementById('hint').textContent=q.hint;document.getElementById('hintIcon').textContent=quizIcons[currentQ%quizIcons.length];document.getElementById('question').textContent=q.text;const opts=document.getElementById('opts');opts.innerHTML='';q.options.forEach((opt,i)=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<span class="key">${opt.key}</span><span>${opt.text}</span>`;b.onclick=()=>selectOption(i,b);opts.appendChild(b)});const next=document.getElementById('next');next.classList.remove('enabled');next.textContent=currentQ===questions.length-1?'查看结果 →':'继续 →'}
+function selectOption(i,el){document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');selectedOpt=i;document.getElementById('next').classList.add('enabled')}
+function nextQuestion(){if(selectedOpt===null)return;answers.push(questions[currentQ].options[selectedOpt].dim);if(currentQ<questions.length-1){currentQ++;renderQuestion()}else{showResult()}}
+function goBack(){if(currentQ===0){showPage('home')}else{currentQ--;answers.pop();renderQuestion()}}
+function calcResult(){const count={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};answers.forEach(d=>count[d]++);const type=(count.E>=count.I?'E':'I')+(count.S>=count.N?'S':'N')+(count.T>=count.F?'T':'F')+(count.J>=count.P?'J':'P');return typeMap[type]||'假装冷静的柴犬'}
+function formatDogName(name){const breeds=['拉布拉多','马尔济斯','阿拉斯加','哈士奇','萨摩耶','杜宾','边牧','金毛','比格','德牧','泰迪','柴犬','柯基','松狮','比熊','腊肠'];for(const breed of breeds){if(name.endsWith(breed)){const prefix=name.slice(0,name.length-breed.length);return prefix+'<br>'+breed}}return name}
+function showResult(){const typeName=calcResult();const data=results[typeName];document.getElementById('type').innerHTML=formatDogName(typeName);document.getElementById('subname').textContent=data.subname;document.getElementById('quote').textContent=data.quote;document.getElementById('desc').textContent=data.desc;document.getElementById('avatar').textContent=dogIcons[data.dog]||'🐶';const traits=document.getElementById('traits');traits.innerHTML='';data.traits.forEach(t=>{const s=document.createElement('span');s.className='trait';s.textContent=t;traits.appendChild(s)});const now=new Date();document.getElementById('date').textContent=`${now.getMonth()+1}月${now.getDate()}日`;showPage('result')}
+function shareResult(){const type=document.getElementById('type').innerText.replace(/\n/g,'');const text=`我在 DogTI 测出来是「${type}」，你也来测测？`;if(navigator.share){navigator.share({title:'DogTI 测试结果',text,url:window.location.href})}else{navigator.clipboard?.writeText(text+' '+window.location.href);alert('结果文案已复制，去发给朋友吧。')}}
+function retryQuiz(){startQuiz()}
+</script>
+</body>
+</html>
