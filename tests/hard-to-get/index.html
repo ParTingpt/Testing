@@ -73,21 +73,21 @@ h1 {margin:0;font-size:clamp(30px,7vw,46px);line-height:1.08;letter-spacing:-.03
   <a class="back" href="../../index.html">← 返回测试主页</a>
   <section id="intro" class="screen active">
     <div class="hero card">
-      <div class="eyebrow">娱乐向 · 恋爱氛围测试 · 难追程度测评</div>
+      <div class="eyebrow">娱乐向 · 恋爱气场测试 · 难追程度测评</div>
       <h1>《你在别人眼里有多难追测试》</h1>
-      <p class="sub">这套测试测的不是你有没有人喜欢，而是你在别人眼里到底是“很好靠近”，还是“像要过很多轮筛选才能接近”。它不走单纯累加路线，而是根据你的慢热程度、边界感、回应清晰度和筛选标准做综合判断，最后给你一个更像真实恋爱气场的结果。</p>
+      <p class="sub">这套测试测的不是你有没有人喜欢，而是别人靠近你时，会不会觉得压力很大。你到底是比较好接近，还是属于要花很多时间和耐心，才能慢慢走近的类型？</p>
       <div class="hero-tips">
-        <span class="pill">12题正式版</span><span class="pill">多维综合计分</span><span class="pill">5种难追类型</span><span class="pill">结果页可截图</span>
+        <span class="pill">16题正式版</span><span class="pill">更好读的日常表达</span><span class="pill">综合判断</span><span class="pill">结果页可截图</span>
       </div>
       <div class="preview-badge">结果类型：恋爱绿灯型 / 慢热解锁型 / 高门槛筛选型 / 最终面试官型 / 隐藏Boss型</div>
       <div class="actions">
-        <div class="hint">作答时请选择“现实里别人最容易感受到的你”，不要选你理想中的恋爱状态。</div>
+        <div class="hint">请按照现实里最像你的状态作答，不要选你希望自己成为的样子。</div>
         <button id="startBtn" class="btn btn-primary" type="button">开始测试</button>
       </div>
     </div>
   </section>
   <section id="test" class="screen">
-    <div class="dock card"><div class="progress"><span id="progressBar"></span></div><div class="progress-text" id="progressText">0 / 12</div></div>
+    <div class="dock card"><div class="progress"><span id="progressBar"></span></div><div class="progress-text" id="progressText">0 / 16</div></div>
     <div class="test-wrap card">
       <div id="questionList"></div>
       <div class="actions">
@@ -100,7 +100,7 @@ h1 {margin:0;font-size:clamp(30px,7vw,46px);line-height:1.08;letter-spacing:-.03
     </div>
   </section>
   <section id="loading" class="screen">
-    <div class="loading-wrap card"><div class="spinner"></div><h2>正在评估你的难追气场…</h2><p id="loadingText">读取你的边界感和回应模式中…</p></div>
+    <div class="loading-wrap card"><div class="spinner"></div><h2>正在生成你的结果…</h2><p id="loadingText">正在整理你的作答特点…</p></div>
   </section>
   <section id="result" class="screen">
     <div class="result-wrap card">
@@ -110,7 +110,7 @@ h1 {margin:0;font-size:clamp(30px,7vw,46px);line-height:1.08;letter-spacing:-.03
       </div>
       <div class="box"><h3>你的难追画像</h3><div class="basic-grid" id="basicGrid"></div></div>
       <div class="box"><h3>结果解释</h3><p id="resultDesc"></p></div>
-      <div class="note">计分说明：本测试不是简单“每题加一分”，而是把你的作答拆成慢热程度、边界感、回应清晰度、筛选标准与可接近度五个部分，综合生成别人眼里的“难追难度”。因此同分区间里，不同作答风格的人也能得到更贴脸的结果。</div>
+      <div class="note">计分说明：这套测试不是简单把每题分数相加，而是会综合你的慢热程度、边界感、表达清晰度、筛选标准和可接近度，来判断别人眼里的“难追程度”。</div>
       <div class="result-actions">
         <button id="restartBtn" class="btn btn-secondary" type="button">重新测试</button>
         <a class="btn btn-primary" href="../../index.html" style="text-decoration:none">返回测试主页</a>
@@ -119,8 +119,8 @@ h1 {margin:0;font-size:clamp(30px,7vw,46px);line-height:1.08;letter-spacing:-.03
   </section>
 </main>
 <script>
-const questions = [{"t": "刚认识你的人，最容易对你产生哪种感觉？", "options": [["看着挺好接近，但真正熟起来没那么快。", {"warm": 1, "reserve": 1}], ["气场不错，但不太敢贸然靠近。", {"reserve": 2, "standards": 1}], ["会觉得你不高冷，只是要先通过你的观察期。", {"warm": 1, "clarity": 1, "reserve": 1}], ["第一眼就觉得：这个人应该不是随便谁都能追到。", {"reserve": 2, "standards": 2}]]}, {"t": "别人主动找你聊天时，你更常见的状态是？", "options": [["只要对方自然一点，我通常会接得住话。", {"warm": 2}], ["会聊，但我不会一下子把热情全给出来。", {"warm": 1, "reserve": 1}], ["看心情和对方表现，不是每个人都值得我认真回。", {"standards": 2, "reserve": 1}], ["如果没有戳中我感兴趣的点，我可能就礼貌结束。", {"reserve": 2, "clarity": 1}]]}, {"t": "面对暧昧期的试探，你更像哪一种？", "options": [["你进一步，我也会适度给回应。", {"warm": 2, "clarity": 1}], ["我会先观察一阵子，再决定要不要放你进来。", {"reserve": 2}], ["我会给一点信号，但不会让人太快看透我。", {"reserve": 1, "clarity": 1}], ["我会让对方先证明诚意，而不是我先上头。", {"standards": 2, "reserve": 1}]]}, {"t": "如果有人对你有好感，你希望对方怎么做最加分？", "options": [["真诚一点，别太油。", {"warm": 1, "clarity": 2}], ["稳定出现，让我慢慢确认你不是一时兴起。", {"reserve": 2, "clarity": 1}], ["有分寸地表达喜欢，不要上来就越界。", {"standards": 2, "clarity": 1}], ["拿出行动力和判断力，让我觉得你是有实力的。", {"standards": 2, "reserve": 1}]]}, {"t": "你在感情里最不喜欢别人哪种表现？", "options": [["忽冷忽热，像在玩猜谜。", {"clarity": 2}], ["太快上头，搞得我压力很大。", {"reserve": 2}], ["没有边界感，动不动就管太多。", {"standards": 2, "reserve": 1}], ["嘴上说得很好，实际一点诚意都没有。", {"standards": 2, "clarity": 1}]]}, {"t": "别人约你出来时，你的默认反应更接近：", "options": [["只要我有空、也不反感，基本可以约。", {"warm": 2}], ["可以约，但我会先看这次约得有没有诚意。", {"warm": 1, "standards": 1}], ["我不会轻易答应，除非我已经觉得你还不错。", {"reserve": 2, "standards": 1}], ["约我不难，但想约到我愿意认真投入很难。", {"reserve": 1, "standards": 2}]]}, {"t": "你会怎么判断一个人值不值得继续了解？", "options": [["相处舒不舒服。", {"warm": 2}], ["看对方是不是稳定、靠谱。", {"clarity": 1, "standards": 1}], ["看他有没有分寸，也有没有持续投入。", {"standards": 2, "clarity": 1}], ["看他能不能经得住我后续的观察和筛选。", {"reserve": 2, "standards": 2}]]}, {"t": "在别人眼里，你的边界感通常是：", "options": [["有，但不锋利。", {"warm": 2}], ["挺清楚的，只是我说话不会太重。", {"clarity": 2}], ["比较强，靠太近我会立刻后退。", {"reserve": 2}], ["非常明确，谁能进来要看我愿不愿意。", {"standards": 2, "reserve": 1}]]}, {"t": "对方向你表达喜欢时，你更容易出现哪种反应？", "options": [["如果我也有感觉，回应会比较明显。", {"warm": 2, "clarity": 1}], ["我不会立刻拒绝，但也不会马上给答案。", {"reserve": 2}], ["我会继续观察，看他是不是只会说不会做。", {"standards": 2, "clarity": 1}], ["我表面平静，但心里已经把对方拉进评估流程。", {"standards": 2, "reserve": 1}]]}, {"t": "你的“难追”更多来自哪里？", "options": [["不是难追，只是我不喜欢暧昧拉扯。", {"clarity": 2}], ["我慢热，所以别人得给我一点时间。", {"reserve": 2}], ["我会认真筛人，不会因为寂寞就随便开始。", {"standards": 2}], ["我不是故意难追，只是能让我心动的人门槛确实高。", {"standards": 2, "reserve": 1}]]}, {"t": "如果关系推进得太快，你通常会：", "options": [["提醒一下节奏，慢一点就好。", {"clarity": 2}], ["本能往后退，想拉开一点距离。", {"reserve": 2}], ["先观察对方是不是只图新鲜感。", {"standards": 2}], ["会直接把门重新关上，除非对方真的很稳。", {"reserve": 1, "standards": 2}]]}, {"t": "你最像下面哪句话？", "options": [["我不是高冷，我只是对值得的人会更柔软。", {"warm": 2, "reserve": 1}], ["我需要时间，不代表我没有感觉。", {"reserve": 2, "warm": 1}], ["想追我可以，但别拿低配诚意来试。", {"standards": 2, "clarity": 1}], ["想走进我这里，基本得过好几轮。", {"standards": 2, "reserve": 2}]]}];
-const results = {"恋爱绿灯型": {"range": [0, 27], "subtitle": "你给人的感觉不是“难追”，而是“有回应”。", "desc": "在别人眼里，你的门没有焊死，甚至还带一点“只要方式对，我就会接住你”的信号。你不是没有标准，而是不会故意把喜欢这件事弄得很复杂。只要对方真诚、自然、不越界，你通常愿意给机会。\n\n你的难追程度偏低，不是因为你随便，而是因为你表达得相对清楚。别人能读到你的边界，也能读到你的好感，所以不会一直在门口打转。追你的人会觉得：有戏，而且不是全靠猜。", "advice": "适合你的追求方式：真诚直接、节奏自然、别太油。别人在你这里最容易加分的，不是套路，而是舒服和靠谱。"}, "慢热解锁型": {"range": [28, 39], "subtitle": "你不是难追，你只是需要一点时间加载。 ", "desc": "在别人眼里，你最明显的特点是慢热。你不会因为一点点心动就立刻打开全部权限，也不会在关系刚开始时给出特别猛烈的回应。你更像一扇需要慢慢解锁的门，得先稳定出现、让你建立安全感，后续才会越来越好接近。\n\n你的难追程度不算高，但也绝对不是“一下就能拿下”的类型。别人追你时常会觉得：你不是没感觉，只是进度条真的走得慢。只要对方不心急、不乱试探，很多关系其实都有机会继续往下走。", "advice": "适合你的追求方式：稳定、耐心、持续投入。越是急着要结果，越容易被你判出局。"}, "高门槛筛选型": {"range": [40, 51], "subtitle": "你不是在谈恋爱，你像在做认真筛选。 ", "desc": "在别人眼里，你的“难追”很大一部分来自标准感。你会看边界、看投入、看诚意，也会看对方到底是不是只会说漂亮话。不是谁靠近你都能进入下一轮，更不是会聊天、会制造氛围就够了。\n\n你给人的感觉往往是：可以接近，但想真正推进关系得拿出点实力。别人会意识到，追你不能只靠嘴甜和热情，还得靠稳定、分寸感和真实行动。所以你属于难度中上，但难在有逻辑，不是难在作。", "advice": "适合你的追求方式：行动比话更重要，边界感和持续性缺一不可。"}, "最终面试官型": {"range": [52, 63], "subtitle": "别人追你时，常像在经历好几轮终面。 ", "desc": "在别人眼里，你不是简单的慢热，也不只是有标准，你更像一个会层层观察、层层判断的人。你会看细节、看稳定性、看价值观，也会看对方在不同阶段是不是还能保持同样的投入。很多人可能第一轮就被你刷掉，能留到后面的通常都不简单。\n\n你的难追程度已经很高了。不是因为你冷，而是因为你对“开始一段关系”这件事非常认真。别人靠近你时，常常会感受到一种很明显的压力：不是不能追，而是得足够靠谱，才有资格继续。", "advice": "适合你的追求方式：拿出持续诚意、情绪稳定和现实能力，别想靠速成拿结果。"}, "隐藏Boss型": {"range": [64, 200], "subtitle": "你在别人眼里，基本是恋爱副本的隐藏关。 ", "desc": "在别人眼里，你的难追程度已经不是普通级别，而是“看起来有入口，实际上层层设防”。你不一定故意高冷，也不一定总是拒人千里，但你会天然保留距离、严格筛选、谨慎给回应。想走近你，既要过边界关，又要过诚意关，还要过耐心和稳定性测试。\n\n很多人面对你时会直接进入“这题太难”的状态。因为你给人的感觉不是靠一时热情就能打动，而是要真的有长期投入的准备。你不轻易开始，所以一旦开始，往往也不是闹着玩的。", "advice": "适合你的追求方式：长期主义、稳定兑现、别试图投机取巧。"}};
+const questions = [{"t": "刚认识的人想靠近你，你通常会？", "options": [["只要不讨厌，我会自然相处。", {"warm": 2}], ["会接触一下，但不会一下子很热情。", {"warm": 1, "reserve": 1}], ["先看看对方是不是认真的。", {"reserve": 1, "standards": 1}], ["会先保持一点距离。", {"reserve": 2, "standards": 1}]]}, {"t": "别人主动找你聊天时，你更像？", "options": [["基本都会正常回。", {"warm": 2}], ["会回，但不会很快很热。", {"warm": 1, "reserve": 1}], ["看内容和看人，不是谁我都想多聊。", {"reserve": 1, "standards": 1}], ["如果没兴趣，我通常很快结束。", {"reserve": 2, "clarity": 1}]]}, {"t": "有人夸你时，你通常会？", "options": [["大方接住，也会回一点好话。", {"warm": 2, "clarity": 1}], ["会开心，但表现得比较淡。", {"warm": 1, "reserve": 1}], ["表面平静，心里先观察。", {"reserve": 1, "clarity": 1}], ["会想：他为什么突然这样说。", {"reserve": 2, "standards": 1}]]}, {"t": "别人约你单独出去，你第一反应更像？", "options": [["想去就去，不会想太多。", {"warm": 2}], ["会考虑一下，但不排斥。", {"warm": 1, "reserve": 1}], ["要先看我对他有没有一点好感。", {"reserve": 1, "standards": 1}], ["通常不会轻易答应。", {"reserve": 2, "standards": 1}]]}, {"t": "暧昧的时候，你更像哪种人？", "options": [["有感觉就会给回应。", {"warm": 2, "clarity": 1}], ["有一点回应，但不会太明显。", {"warm": 1, "reserve": 1}], ["会先观察，不急着表态。", {"reserve": 2}], ["经常让人看不出来我在想什么。", {"reserve": 1, "clarity": 1}]]}, {"t": "对你来说，开始一段关系最重要的是？", "options": [["相处舒服。", {"warm": 2}], ["聊得来，也愿意互相了解。", {"warm": 1, "clarity": 1}], ["人要稳，态度要认真。", {"standards": 2}], ["不但要认真，还要很合适。", {"standards": 2, "reserve": 1}]]}, {"t": "发现对方对很多人都很好，你会？", "options": [["先看看情况，不一定有问题。", {"warm": 1}], ["会有点介意。", {"reserve": 1}], ["会明显减分。", {"standards": 2}], ["大概率直接没兴趣了。", {"standards": 2, "reserve": 1}]]}, {"t": "在感情里，你的边界感通常是？", "options": [["有，但不重。", {"warm": 2}], ["有边界，但我会说得比较温和。", {"clarity": 2}], ["边界感比较强。", {"reserve": 2}], ["很强，不是谁都能靠近。", {"reserve": 2, "standards": 1}]]}, {"t": "面对喜欢你的人，你最常见的状态是？", "options": [["如果我也有点喜欢，会让对方感觉到。", {"warm": 2, "clarity": 1}], ["会有回应，但不算明显。", {"warm": 1, "reserve": 1}], ["我怕给错信号，所以比较谨慎。", {"reserve": 2}], ["别人经常分不清我是客气还是有好感。", {"reserve": 1, "clarity": 1}]]}, {"t": "你会因为什么突然不想继续了解一个人？", "options": [["其实不太会突然下头。", {"warm": 1}], ["一些小细节让我不舒服。", {"reserve": 1, "clarity": 1}], ["分寸感不好，或者不够稳。", {"standards": 2}], ["只要发现不合适，我会很快收回来。", {"standards": 2, "reserve": 1}]]}, {"t": "如果关系推进太快，你通常会？", "options": [["提醒一下，慢一点就好。", {"clarity": 2}], ["会下意识往后退一点。", {"reserve": 2}], ["先看看对方是不是一时上头。", {"standards": 2}], ["会明显把距离拉开。", {"reserve": 2, "standards": 1}]]}, {"t": "别人追你，最容易卡在哪一步？", "options": [["其实不卡，主要看感觉。", {"warm": 2}], ["卡在我回应没那么快。", {"reserve": 1, "clarity": 1}], ["卡在我观察的时间比较长。", {"reserve": 2}], ["卡在很难真正走近我。", {"reserve": 2, "standards": 1}]]}, {"t": "如果对方真诚，但条件一般，你会？", "options": [["可以先了解看看。", {"warm": 2}], ["会考虑，看相处感觉。", {"warm": 1, "clarity": 1}], ["还得看够不够合适。", {"standards": 2}], ["真诚只是开始，不代表我会动心。", {"standards": 2, "reserve": 1}]]}, {"t": "别人觉得你难追，最可能是因为？", "options": [["我不是难追，只是比较正常。", {"warm": 2}], ["我慢热。", {"reserve": 2}], ["我标准比较高。", {"standards": 2}], ["我很少把态度说得很明白。", {"clarity": 1, "reserve": 1}]]}, {"t": "你更像下面哪句话？", "options": [["我其实挺好相处的。", {"warm": 2}], ["我需要时间，不代表我没感觉。", {"reserve": 2}], ["想追我，可以，但要认真。", {"standards": 2}], ["想走进我心里，不太容易。", {"reserve": 2, "standards": 1}]]}, {"t": "别人追你追到一半放弃了，你更可能想？", "options": [["那说明本来就不合适。", {"warm": 1, "clarity": 1}], ["有点可惜，但也正常。", {"reserve": 1}], ["我会觉得他可能没那么坚定。", {"reserve": 1, "standards": 1}], ["能留下来的人本来就不多。", {"reserve": 2, "standards": 1}]]}];
+const results = {"恋爱绿灯型": {"range": [0, 35], "subtitle": "你给人的感觉比较好接近。", "desc": "在别人眼里，你不算难追。不是因为你没有要求，而是因为你不会故意把态度藏得太深。只要对方自然、真诚、不越界，你通常会给回应，也愿意相处看看。\n\n追你的人大多不会觉得压力特别大，因为他们能感受到你的态度，也比较容易知道自己是不是有机会。", "advice": "别人追你最容易加分的方式，是自然一点、真诚一点，不要太夸张。"}, "慢热解锁型": {"range": [36, 48], "subtitle": "你不是难追，只是慢一点。", "desc": "在别人眼里，你的门不是关着的，只是开得比较慢。你不会一下子热起来，也不会刚认识就把全部心思放进去。别人靠近你时，通常要先陪你走一段路，才能慢慢看到你的真实温度。\n\n你不是不给机会，只是需要时间。只要对方稳一点、别太急，很多关系其实是有机会往下走的。", "advice": "适合你的追求方式，是耐心、稳定、别催进度。"}, "高门槛筛选型": {"range": [49, 61], "subtitle": "你会认真挑人，不会随便开始。", "desc": "在别人眼里，你已经属于不太好追的类型了。你会看态度、看分寸、看稳定，也会看两个人到底合不合适。不是谁只要表达喜欢，就能让你往前走一步。\n\n你的难追，不是故意端着，而是你真的会筛选。别人想靠近你，得让你看到诚意，也得让你觉得放心。", "advice": "适合你的追求方式，是把话和行动都落到实处。"}, "最终面试官型": {"range": [62, 74], "subtitle": "别人追你，常常像在过好几关。", "desc": "在别人眼里，你不是单纯慢热，也不只是标准高，而是会一边相处一边认真判断。你会注意很多细节，也很在意一个人能不能一直保持同样的态度。\n\n所以追你的人常会觉得：不是完全没机会，但想真正走近你，得一关一关来。你给人的压力，主要来自你很认真。", "advice": "适合你的追求方式，是长期稳定，不是一下子特别热。"}, "隐藏Boss型": {"range": [75, 200], "subtitle": "你在别人眼里，是高难度选手。", "desc": "在别人眼里，你是真的难追。不是你一定很冷，而是你有距离、有标准，也不轻易把喜欢表现得很明显。想靠近你的人，常常刚开始就会觉得有压力。\n\n你不容易被一时的热情打动，也不会因为空窗就随便开始。能走近你的人，通常得真的认真、真的稳定，还得有耐心。", "advice": "适合你的追求方式，是长期投入和稳定表现，不要想着走捷径。"}};
 const screens = {
   intro: document.getElementById('intro'),
   test: document.getElementById('test'),
@@ -175,7 +175,7 @@ function calculateProfile() {
       Object.entries(scoreMap).forEach(([k, v]) => dim[k] += v);
     }
   });
-  const rawHard = dim.reserve * 3 + dim.standards * 4 + (24 - dim.warm) * 1.5 + (18 - dim.clarity) * 1.2;
+  const rawHard = dim.reserve * 3 + dim.standards * 4 + (32 - dim.warm) * 1.2 + (18 - dim.clarity) * 1.1;
   const hard = Math.round(rawHard);
   return {...dim, hard};
 }
@@ -189,10 +189,10 @@ function getResultKey(profile) {
 function renderBasics(profile, resultKey) {
   const grid = document.getElementById('basicGrid');
   const rank = {
-    warm: profile.warm >= 14 ? '高' : profile.warm >= 9 ? '中' : '低',
-    reserve: profile.reserve >= 16 ? '高' : profile.reserve >= 10 ? '中' : '低',
+    warm: profile.warm >= 18 ? '高' : profile.warm >= 11 ? '中' : '低',
+    reserve: profile.reserve >= 18 ? '高' : profile.reserve >= 11 ? '中' : '低',
     clarity: profile.clarity >= 12 ? '高' : profile.clarity >= 7 ? '中' : '低',
-    standards: profile.standards >= 16 ? '高' : profile.standards >= 10 ? '中' : '低',
+    standards: profile.standards >= 18 ? '高' : profile.standards >= 11 ? '中' : '低',
   };
   grid.innerHTML = [
     ['最终结果', resultKey],
@@ -200,7 +200,7 @@ function renderBasics(profile, resultKey) {
     ['慢热程度', rank.reserve],
     ['筛选标准', rank.standards],
     ['可接近度', rank.warm],
-    ['回应清晰度', rank.clarity]
+    ['表达清晰度', rank.clarity]
   ].map(([label, value]) => `<div class="basic-item"><div class="basic-label">${label}</div><div class="basic-value">${value}</div></div>`).join('');
 }
 function buildResultSvg(name, subtitle) {
@@ -242,7 +242,7 @@ document.getElementById('prevBtn').addEventListener('click', () => { if (app.ind
 document.getElementById('nextBtn').addEventListener('click', () => { if (app.index < questions.length - 1) { app.index += 1; renderQuestions(); } });
 document.getElementById('submitBtn').addEventListener('click', () => {
   show('loading');
-  const logs = ['读取你的边界感和回应模式中…','估算你的慢热指数和筛选标准中…','生成别人眼里的难追画像中…'];
+  const logs = ['正在整理你的作答特点…','正在判断你的慢热和边界感…','正在生成别人眼里的难追印象…'];
   const text = document.getElementById('loadingText');
   let i = 0;
   const timer = setInterval(() => {
